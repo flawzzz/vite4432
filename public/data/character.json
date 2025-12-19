@@ -1,0 +1,230 @@
+[
+  {
+    "job": "엘레멘탈 마스터",
+    "image": "elementalmaster",
+    "group": "마법사(여)",
+    "": ""
+  },
+  {
+    "job": "마도학자",
+    "image": "mado",
+    "group": "마법사(여)",
+    "": ""
+  },
+  {
+    "job": "배틀메이지",
+    "image": "battlemage",
+    "group": "마법사(여)",
+    "": ""
+  },
+  {
+    "job": "인챈트리스",
+    "image": "enchan",
+    "group": "마법사(여)",
+    "": ""
+  },
+  {
+    "job": "레인저(여)",
+    "image": "ranger_f",
+    "group": "거너(여)",
+    "": ""
+  },
+  {
+    "job": "런처(여)",
+    "image": "launcher_f",
+    "group": "거너(여)",
+    "": ""
+  },
+  {
+    "job": "메카닉(여)",
+    "image": "mechanic_f",
+    "group": "거너(여)",
+    "": ""
+  },
+  {
+    "job": "스핏파이어(여)",
+    "image": "spit_f",
+    "group": "거너(여)",
+    "": ""
+  },
+  {
+    "job": "소드마스터",
+    "image": "soma",
+    "group": "귀검사(여)",
+    "": ""
+  },
+  {
+    "job": "다크템플러",
+    "image": "darktempler",
+    "group": "귀검사(여)",
+    "": ""
+  },
+  {
+    "job": "데몬슬레이어",
+    "image": "demonslayer",
+    "group": "귀검사(여)",
+    "": ""
+  },
+  {
+    "job": "베가본드",
+    "image": "vegabond",
+    "group": "귀검사(여)",
+    "": ""
+  },
+  {
+    "job": "블레이드",
+    "image": "blade",
+    "group": "귀검사(여)",
+    "": ""
+  },
+  {
+    "job": "크루세이더(여)",
+    "image": "cru_f",
+    "group": "프리스트(여)",
+    "": ""
+  },
+  {
+    "job": "이단심판관",
+    "image": "edan",
+    "group": "프리스트(여)",
+    "": ""
+  },
+  {
+    "job": "무녀",
+    "image": "munye",
+    "group": "프리스트(여)",
+    "": ""
+  },
+  {
+    "job": "미스트리스",
+    "image": "miss",
+    "group": "프리스트(여)",
+    "": ""
+  },
+  {
+    "job": "인파이터(여)",
+    "image": "infighter_f",
+    "group": "프리스트(여)",
+    "": ""
+  },
+  {
+    "job": "크루세이더(남)",
+    "image": "cru_m",
+    "group": "프리스트(남)",
+    "": ""
+  },
+  {
+    "job": "인파이터(남)",
+    "image": "infighter_m",
+    "group": "프리스트(남)",
+    "": ""
+  },
+  {
+    "job": "로그",
+    "image": "log",
+    "group": "도적",
+    "": ""
+  },
+  {
+    "job": "쿠노이치",
+    "image": "kuno",
+    "group": "도적",
+    "": ""
+  },
+  {
+    "job": "와일드베인",
+    "image": "wildvayne",
+    "group": "워리어",
+    "": ""
+  },
+  {
+    "job": "윈드시어",
+    "image": "wind",
+    "group": "워리어",
+    "": ""
+  },
+  {
+    "job": "뱅가드",
+    "image": "vanguard",
+    "group": "마창사",
+    "": ""
+  },
+  {
+    "job": "다크랜서",
+    "image": "darklancer",
+    "group": "마창사",
+    "": ""
+  },
+  {
+    "job": "웨펀마스터",
+    "image": "weaponmaster",
+    "group": "귀검사(남)",
+    "": ""
+  },
+  {
+    "job": "소울브링어",
+    "image": "soul",
+    "group": "귀검사(남)",
+    "": ""
+  },
+  {
+    "job": "버서커",
+    "image": "burserker",
+    "group": "귀검사(남)",
+    "": ""
+  },
+  {
+    "job": "아수라",
+    "image": "asura",
+    "group": "귀검사(남)",
+    "": ""
+  },
+  {
+    "job": "넨마스터",
+    "image": "nenmsater",
+    "group": "격투가",
+    "": ""
+  },
+  {
+    "job": "스트라이커",
+    "image": "striker",
+    "group": "격투가",
+    "": ""
+  },
+  {
+    "job": "스트리트파이터",
+    "image": "streetfighter",
+    "group": "격투가",
+    "": ""
+  },
+  {
+    "job": "그래플러",
+    "image": "grappler",
+    "group": "격투가",
+    "": ""
+  },
+  {
+    "job": "레인저(남)",
+    "image": "ranger_m",
+    "group": "거너(남)",
+    "": ""
+  },
+  {
+    "job": "런처(남)",
+    "image": "launcher_m",
+    "group": "거너(남)",
+    "": ""
+  },
+  {
+    "job": "메카닉(남)",
+    "image": "mechanic_m",
+    "group": "거너(남)",
+    "": ""
+  },
+  {
+    "job": "스핏파이어(남)",
+    "image": "spit_m",
+    "group": "거너(남)",
+    "": ""
+  }
+]
