@@ -40,6 +40,12 @@ export default function SetEffectSimulator() {
     const [braceletUnique, setBraceletUnique] = useState<string>("");
     const [earringUnique, setEarringUnique] = useState<string>("");
 
+    const [isCharacterModalOpen, setIsCharacterModalOpen] = useState<boolean>(false);
+    const [isArmorModalOpen, setIsArmorModalOpen] = useState<boolean>(false);
+    const [isAccessoryModalOpen, setIsAccessoryModalOpen] = useState<boolean>(false);
+    const [isSpecialModalOpen, setIsSpecialModalOpen] = useState<boolean>(false);
+    const [isWeaponModalOpen, setIsWeaponModalOpen] = useState<boolean>(false);
+
     useEffect(() => {
         async function loadData() {
             try {
@@ -185,41 +191,34 @@ export default function SetEffectSimulator() {
                             <label className="block mb-1 text-sm font-semibold">
                                 직업을 선택하세요
                             </label>
-                            <select
-                                className="w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm"
-                                value={selectedJob}
-                                onChange={(e) => {
-                                    setSelectedJob(e.target.value);
-                                    setSelectedWeapon("");
-                                }}
+                            <button
+                                type="button"
+                                className="w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm flex items-center justify-between hover:border-indigo-400 hover:bg-slate-700 transition-colors"
+                                onClick={() => setIsCharacterModalOpen(true)}
                             >
-                                <option value="">선택</option>
-                                {characters.map((c) => (
-                                    <option key={c.job} value={c.job}>
-                                        {c.group} - {c.job}
-                                    </option>
-                                ))}
-                            </select>
+                                <span>
+                                    {selectedCharacter
+                                        ? `${selectedCharacter.group} - ${selectedCharacter.job}`
+                                        : "직업을 선택하려면 클릭하세요"}
+                                </span>
+                                <span className="text-xs text-slate-400">전체 목록 보기</span>
+                            </button>
                         </div>
 
                         <div>
                             <label className="block mb-1 text-sm font-semibold">
                                 방어구 세트를 선택하세요
                             </label>
-                            <select
-                                className="w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm"
-                                value={selectedArmor}
-                                onChange={(e) => setSelectedArmor(e.target.value)}
+                            <button
+                                type="button"
+                                className="w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm flex items-center justify-between hover:border-indigo-400 hover:bg-slate-700 transition-colors"
+                                onClick={() => setIsArmorModalOpen(true)}
                             >
-                                <option value="">선택</option>
-                                {[...new Set(armorSets.map((s) => s.name))]
-                                    .filter(Boolean)
-                                    .map((name) => (
-                                        <option key={name} value={name}>
-                                            {name}
-                                        </option>
-                                    ))}
-                            </select>
+                                <span>
+                                    {armor ? armor.name : "방어구 세트를 선택하려면 클릭하세요"}
+                                </span>
+                                <span className="text-xs text-slate-400">이미지로 선택</span>
+                            </button>
                         </div>
 
                         <div>
@@ -238,20 +237,16 @@ export default function SetEffectSimulator() {
                             <label className="block mb-1 text-sm font-semibold">
                                 악세사리 세트를 선택하세요
                             </label>
-                            <select
-                                className="w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm"
-                                value={selectedAccessory}
-                                onChange={(e) => setSelectedAccessory(e.target.value)}
+                            <button
+                                type="button"
+                                className="w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm flex items-center justify-between hover:border-indigo-400 hover:bg-slate-700 transition-colors"
+                                onClick={() => setIsAccessoryModalOpen(true)}
                             >
-                                <option value="">선택</option>
-                                {[...new Set(accessorySets.map((s) => s.name))]
-                                    .filter(Boolean)
-                                    .map((name) => (
-                                        <option key={name} value={name}>
-                                            {name}
-                                        </option>
-                                    ))}
-                            </select>
+                                <span>
+                                    {accessory ? accessory.name : "악세사리 세트를 선택하려면 클릭하세요"}
+                                </span>
+                                <span className="text-xs text-slate-400">이미지로 선택</span>
+                            </button>
                         </div>
 
                         <div>
@@ -270,20 +265,16 @@ export default function SetEffectSimulator() {
                             <label className="block mb-1 text-sm font-semibold">
                                 특수장비 세트를 선택하세요
                             </label>
-                            <select
-                                className="w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm"
-                                value={selectedSpecial}
-                                onChange={(e) => setSelectedSpecial(e.target.value)}
+                            <button
+                                type="button"
+                                className="w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm flex items-center justify-between hover:border-indigo-400 hover:bg-slate-700 transition-colors"
+                                onClick={() => setIsSpecialModalOpen(true)}
                             >
-                                <option value="">선택</option>
-                                {[...new Set(specialSets.map((s) => s.name))]
-                                    .filter(Boolean)
-                                    .map((name) => (
-                                        <option key={name} value={name}>
-                                            {name}
-                                        </option>
-                                    ))}
-                            </select>
+                                <span>
+                                    {special ? special.name : "특수장비 세트를 선택하려면 클릭하세요"}
+                                </span>
+                                <span className="text-xs text-slate-400">이미지로 선택</span>
+                            </button>
                         </div>
 
                         <div>
@@ -302,18 +293,16 @@ export default function SetEffectSimulator() {
                             <label className="block mb-1 text-sm font-semibold">
                                 무기를 선택하세요
                             </label>
-                            <select
-                                className="w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm"
-                                value={selectedWeapon}
-                                onChange={(e) => setSelectedWeapon(e.target.value)}
+                            <button
+                                type="button"
+                                className="w-full rounded border border-slate-600 bg-slate-800 px-3 py-2 text-sm flex items-center justify-between hover:border-indigo-400 hover:bg-slate-700 transition-colors"
+                                onClick={() => setIsWeaponModalOpen(true)}
                             >
-                                <option value="">선택</option>
-                                {filteredWeapons.map((w) => (
-                                    <option key={w.name} value={w.name}>
-                                        {w.type} - {w.name}
-                                    </option>
-                                ))}
-                            </select>
+                                <span>
+                                    {weapon ? `${weapon.type} - ${weapon.name}` : "무기를 선택하려면 클릭하세요"}
+                                </span>
+                                <span className="text-xs text-slate-400">이미지로 선택</span>
+                            </button>
                         </div>
                     </div>
 
@@ -426,6 +415,291 @@ export default function SetEffectSimulator() {
                     </div>
                 </div>
             </div>
-        </div>
-    );
+            {isCharacterModalOpen && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70">
+                    <div className="max-w-5xl w-full mx-4 max-h-[80vh] rounded-lg bg-slate-900 border border-slate-700 shadow-xl flex flex-col">
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
+                            <h2 className="text-lg font-semibold">직업 선택</h2>
+                            <button
+                                type="button"
+                                className="text-slate-400 hover:text-white text-sm"
+                                onClick={() => setIsCharacterModalOpen(false)}
+                            >
+                                닫기
+                            </button>
+                        </div>
+                        <div className="px-4 py-3 text-xs text-slate-400">
+                            캐릭터 이미지를 클릭해서 직업을 선택하세요.
+                        </div>
+                        <div className="px-4 pb-4 overflow-y-auto">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                                {characters.map((c) => (
+                                    <button
+                                        key={c.job}
+                                        type="button"
+                                        className={`group rounded-lg border px-2 py-2 text-xs text-left bg-slate-800/60 hover:bg-slate-700 transition-colors ${selectedCharacter?.job === c.job
+                                                ? "border-indigo-400"
+                                                : "border-slate-700"
+                                            }`}
+                                        onClick={() => {
+                                            setSelectedJob(c.job);
+                                            setSelectedWeapon("");
+                                            setIsCharacterModalOpen(false);
+                                        }}
+                                    >
+                                        <div className="w-full aspect-square mb-2 overflow-hidden rounded bg-slate-900 flex items-center justify-center">
+                                            <img
+                                                src={`/images/character/${c.image}.PNG`}
+                                                alt={c.job}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                                loading="lazy"
+                                            />
+                                        </div>
+                                        <div className="font-semibold text-slate-100 truncate">
+                                            {c.job}
+                                        </div>
+                                        <div className="text-[10px] text-slate-400 truncate">
+                                            {c.group}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isArmorModalOpen && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70">
+                    <div className="max-w-4xl w-full mx-4 max-h-[80vh] rounded-lg bg-slate-900 border border-slate-700 shadow-xl flex flex-col">
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
+                            <h2 className="text-lg font-semibold">방어구 세트 선택</h2>
+                            <button
+                                type="button"
+                                className="text-slate-400 hover:text-white text-sm"
+                                onClick={() => setIsArmorModalOpen(false)}
+                            >
+                                닫기
+                            </button>
+                        </div>
+                        <div className="px-4 py-3 text-xs text-slate-400">
+                            이미지 카드를 클릭해서 방어구 세트를 선택하세요.
+                        </div>
+                        <div className="px-4 pb-4 overflow-y-auto">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                {[...new Set(armorSets.map((s) => s.name))]
+                                    .filter(Boolean)
+                                    .map((name) => {
+                                        const base =
+                                            armorSets.find(
+                                                (s) => s.name === name && (s.prefix || "") === ""
+                                            ) || armorSets.find((s) => s.name === name)!;
+                                        return (
+                                            <button
+                                                key={name}
+                                                type="button"
+                                                className={`group rounded-lg border px-2 py-2 text-xs text-left bg-slate-800/60 hover:bg-slate-700 transition-colors ${
+                                                    armor?.name === name
+                                                        ? "border-indigo-400"
+                                                        : "border-slate-700"
+                                                }`}
+                                                onClick={() => {
+                                                    setSelectedArmor(name as string);
+                                                    setIsArmorModalOpen(false);
+                                                }}
+                                            >
+                                                <div className="w-full aspect-square mb-2 overflow-hidden rounded bg-slate-900 flex items-center justify-center">
+                                                    <img
+                                                        src={`/images/set/${base.image}.PNG`}
+                                                        alt={base.name}
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                                        loading="lazy"
+                                                    />
+                                                </div>
+                                                <div className="font-semibold text-slate-100 truncate">
+                                                    {base.name}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isAccessoryModalOpen && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70">
+                    <div className="max-w-4xl w-full mx-4 max-h-[80vh] rounded-lg bg-slate-900 border border-slate-700 shadow-xl flex flex-col">
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
+                            <h2 className="text-lg font-semibold">악세사리 세트 선택</h2>
+                            <button
+                                type="button"
+                                className="text-slate-400 hover:text-white text-sm"
+                                onClick={() => setIsAccessoryModalOpen(false)}
+                            >
+                                닫기
+                            </button>
+                        </div>
+                        <div className="px-4 py-3 text-xs text-slate-400">
+                            이미지 카드를 클릭해서 악세사리 세트를 선택하세요.
+                        </div>
+                        <div className="px-4 pb-4 overflow-y-auto">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                {[...new Set(accessorySets.map((s) => s.name))]
+                                    .filter(Boolean)
+                                    .map((name) => {
+                                        const base =
+                                            accessorySets.find(
+                                                (s) => s.name === name && (s.prefix || "") === ""
+                                            ) || accessorySets.find((s) => s.name === name)!;
+                                        return (
+                                            <button
+                                                key={name}
+                                                type="button"
+                                                className={`group rounded-lg border px-2 py-2 text-xs text-left bg-slate-800/60 hover:bg-slate-700 transition-colors ${
+                                                    accessory?.name === name
+                                                        ? "border-indigo-400"
+                                                        : "border-slate-700"
+                                                }`}
+                                                onClick={() => {
+                                                    setSelectedAccessory(name as string);
+                                                    setIsAccessoryModalOpen(false);
+                                                }}
+                                            >
+                                                <div className="w-full aspect-square mb-2 overflow-hidden rounded bg-slate-900 flex items-center justify-center">
+                                                    <img
+                                                        src={`/images/set/${base.image}.PNG`}
+                                                        alt={base.name}
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                                        loading="lazy"
+                                                    />
+                                                </div>
+                                                <div className="font-semibold text-slate-100 truncate">
+                                                    {base.name}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isSpecialModalOpen && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70">
+                    <div className="max-w-4xl w-full mx-4 max-h-[80vh] rounded-lg bg-slate-900 border border-slate-700 shadow-xl flex flex-col">
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
+                            <h2 className="text-lg font-semibold">특수장비 세트 선택</h2>
+                            <button
+                                type="button"
+                                className="text-slate-400 hover:text-white text-sm"
+                                onClick={() => setIsSpecialModalOpen(false)}
+                            >
+                                닫기
+                            </button>
+                        </div>
+                        <div className="px-4 py-3 text-xs text-slate-400">
+                            이미지 카드를 클릭해서 특수장비 세트를 선택하세요.
+                        </div>
+                        <div className="px-4 pb-4 overflow-y-auto">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                {[...new Set(specialSets.map((s) => s.name))]
+                                    .filter(Boolean)
+                                    .map((name) => {
+                                        const base =
+                                            specialSets.find(
+                                                (s) => s.name === name && (s.prefix || "") === ""
+                                            ) || specialSets.find((s) => s.name === name)!;
+                                        return (
+                                            <button
+                                                key={name}
+                                                type="button"
+                                                className={`group rounded-lg border px-2 py-2 text-xs text-left bg-slate-800/60 hover:bg-slate-700 transition-colors ${
+                                                    special?.name === name
+                                                        ? "border-indigo-400"
+                                                        : "border-slate-700"
+                                                }`}
+                                                onClick={() => {
+                                                    setSelectedSpecial(name as string);
+                                                    setIsSpecialModalOpen(false);
+                                                }}
+                                            >
+                                                <div className="w-full aspect-square mb-2 overflow-hidden rounded bg-slate-900 flex items-center justify-center">
+                                                    <img
+                                                        src={`/images/set/${base.image}.PNG`}
+                                                        alt={base.name}
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                                        loading="lazy"
+                                                    />
+                                                </div>
+                                                <div className="font-semibold text-slate-100 truncate">
+                                                    {base.name}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isWeaponModalOpen && (
+                <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70">
+                    <div className="max-w-5xl w-full mx-4 max-h-[80vh] rounded-lg bg-slate-900 border border-slate-700 shadow-xl flex flex-col">
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
+                            <h2 className="text-lg font-semibold">무기 선택</h2>
+                            <button
+                                type="button"
+                                className="text-slate-400 hover:text-white text-sm"
+                                onClick={() => setIsWeaponModalOpen(false)}
+                            >
+                                닫기
+                            </button>
+                        </div>
+                        <div className="px-4 py-3 text-xs text-slate-400">
+                            이미지 카드를 클릭해서 무기를 선택하세요.
+                        </div>
+                        <div className="px-4 pb-4 overflow-y-auto">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                                {filteredWeapons.map((w) => (
+                                    <button
+                                        key={w.name}
+                                        type="button"
+                                        className={`group rounded-lg border px-2 py-2 text-xs text-left bg-slate-800/60 hover:bg-slate-700 transition-colors ${
+                                            weapon?.name === w.name
+                                                ? "border-indigo-400"
+                                                : "border-slate-700"
+                                        }`}
+                                        onClick={() => {
+                                            setSelectedWeapon(w.name);
+                                            setIsWeaponModalOpen(false);
+                                        }}
+                                    >
+                                        <div className="w-full aspect-square mb-2 overflow-hidden rounded bg-slate-900 flex items-center justify-center">
+                                            <img
+                                                src={`/images/weapon/weapon_${w.image}.png`}
+                                                alt={w.name}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                                loading="lazy"
+                                            />
+                                        </div>
+                                        <div className="font-semibold text-slate-100 truncate">
+                                            {w.name}
+                                        </div>
+                                        <div className="text-[10px] text-slate-400 truncate">
+                                            {w.type}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+        </div>);
+
 }
