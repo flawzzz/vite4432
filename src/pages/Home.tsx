@@ -18,6 +18,7 @@ export default function Home() {
                             <Link to="/set" className="text-gray-700 hover:text-indigo-600 font-medium">아이템 세트 효과</Link>
                             <Link to="/weapon" className="text-gray-700 hover:text-indigo-600 font-medium">무기 </Link>
                             <Link to="/effect_simulator" className="text-gray-700 hover:text-indigo-600 font-medium">아이템 시뮬레이터 </Link>
+                            <Link to="/damage_simulator" className="text-gray-700 hover:text-indigo-600 font-medium">데미지 시뮬레이터 </Link>
                         </div>
                     </div>
                 </nav>

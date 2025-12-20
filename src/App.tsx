@@ -6,6 +6,7 @@ import Character from './pages/Character.tsx';
 import Weapon from './pages/Weapon.tsx';
 import SetEffect from './pages/SetEffect.tsx';
 import SetEffectSimulator from './pages/SetEffectSimulator.tsx';
+import DamageSimulator from './pages/DamageSimulator.tsx';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/weapon" element={<Weapon />} />
           <Route path='/set' element={<SetEffect />} />
           <Route path='/effect_simulator' element={<SetEffectSimulator />} />
+          <Route path='/damage_simulator' element={<DamageSimulator />} />
         </Routes>
       </BrowserRouter>
     </>

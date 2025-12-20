@@ -1,0 +1,130 @@
+[
+  {
+    "name": "MLDRS-95",
+    "level_requried": "80",
+    "min_level_damage": "14925",
+    "increment": "1513.8",
+    "cooltime": "40.5",
+    "job": "런처(남)"
+  },
+  {
+    "name": "버스터빔",
+    "level_requried": "75",
+    "min_level_damage": "52429",
+    "increment": "12157",
+    "cooltime": "162",
+    "job": "런처(남)"
+  },
+  {
+    "name": "MSC-7",
+    "level_requried": "70",
+    "min_level_damage": "13482",
+    "increment": "1585",
+    "cooltime": "40.5",
+    "job": "런처(남)"
+  },
+  {
+    "name": "PEA-31 레일건",
+    "level_requried": "65",
+    "min_level_damage": "13442",
+    "increment": "1363.7",
+    "cooltime": "36",
+    "job": "런처(남)"
+  },
+  {
+    "name": "새틀라이트 빔",
+    "level_requried": "50",
+    "min_level_damage": "24632",
+    "increment": "5705",
+    "cooltime": "130.5",
+    "job": "런처(남)"
+  },
+  {
+    "name": "X-1 익스트루더",
+    "level_requried": "45",
+    "min_level_damage": "9734",
+    "increment": "988",
+    "cooltime": "36",
+    "job": "런처(남)"
+  },
+  {
+    "name": "GBU-90 벙커버스터",
+    "level_requried": "40",
+    "min_level_damage": "4302",
+    "increment": "437",
+    "cooltime": "18",
+    "job": "런처(남)"
+  },
+  {
+    "name": "FM-92 스팅어",
+    "level_requried": "35",
+    "min_level_damage": "4072",
+    "increment": "408",
+    "cooltime": "18",
+    "job": "런처(남)"
+  },
+  {
+    "name": "FM-31 그레네이드 런처",
+    "level_requried": "30",
+    "min_level_damage": "2128",
+    "increment": "176",
+    "cooltime": "9",
+    "job": "런처(남)"
+  },
+  {
+    "name": "레이저 라이플",
+    "level_requried": "25",
+    "min_level_damage": "1594.5",
+    "increment": "162",
+    "cooltime": "6.3",
+    "job": "런처(남)"
+  },
+  {
+    "name": "화염 강타",
+    "level_requried": "20",
+    "min_level_damage": "903",
+    "increment": "84",
+    "cooltime": "4.5",
+    "job": "런처(남)"
+  },
+  {
+    "name": "PU-D 원반 발사기",
+    "level_requried": "15",
+    "min_level_damage": "1016",
+    "increment": "103",
+    "cooltime": "4.5",
+    "job": "런처(남)"
+  },
+  {
+    "name": "슈타이어 대전차포",
+    "level_requried": "15",
+    "min_level_damage": "927",
+    "increment": "93",
+    "cooltime": "4.5",
+    "job": "런처(남)"
+  },
+  {
+    "name": "양자 폭탄",
+    "level_requried": "10",
+    "min_level_damage": "1533",
+    "increment": "155",
+    "cooltime": "18",
+    "job": "런처(남)"
+  },
+  {
+    "name": "캐넌볼",
+    "level_requried": "10",
+    "min_level_damage": "603",
+    "increment": "60",
+    "cooltime": "4.5",
+    "job": "런처(남)"
+  },
+  {
+    "name": "배럴샷",
+    "level_requried": "10",
+    "min_level_damage": "644",
+    "increment": "64",
+    "cooltime": "4.5",
+    "job": "런처(남)"
+  }
+]
