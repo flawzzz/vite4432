@@ -1,9 +1,9 @@
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 
 export default function Home() {
     const [query, setQuery] = useState("");
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = (e : React.FormEvent) => {
         e.preventDefault();
         if (!query.trim()) return;
         // 실제 검색은 향후 구현
