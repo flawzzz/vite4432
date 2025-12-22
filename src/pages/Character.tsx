@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 
 export default function Character() {
 
-    interface Character { // data api
+    interface CharacterData {
         job: string;
         image: string;
         group: string;
     }
 
-    const [data, setData] = useState<Character[] | null>(null);
+    const [data, setData] = useState<CharacterData[] | null>(null);
 
     useEffect(() => {
         async function load() {
@@ -19,10 +19,15 @@ export default function Character() {
         load();
     }, []);
 
-    if (!data) return <p>loading...</p>;
+    if (!data) {
+        return (
+            <div className="flex flex-1 items-center justify-center px-4 py-8 text-slate-300">
+                loading...
+            </div>
+        );
+    }
 
-    // data recieved 
-    const grouped: { [key: string]: Character[] } = {};
+    const grouped: { [key: string]: CharacterData[] } = {};
 
     data.forEach(person => {
         const group = person.group;
@@ -31,24 +36,45 @@ export default function Character() {
     });
 
     return (
-        <>
-            {
-                Object.entries(grouped).map(([group, members]) => (
-                    <div key={group} className="flex gap-4">
-                        <div className="w-16">{group}</div>
-                        <div className="flex flex-wrap gap-4">
-                            {
-                                Object.entries(members).map(([index, member]) => (
-                                    <div key={index} className="w-22">
-                                        <img src={`/images/character/${member.image}.PNG`} alt={member.job} />
-                                        <p>{member.job}</p>
+        <div className="flex flex-1 flex-col px-4 py-8">
+            <div className="mx-auto w-full max-w-5xl space-y-6">
+                <header className="space-y-1">
+                    <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+                        직업별 고유 효과
+                    </h1>
+                    <p className="text-xs text-slate-400 sm:text-sm">
+                        직업군별로 정리된 던파모바일 캐릭터 목록입니다.
+                    </p>
+                </header>
+
+                <section className="space-y-4">
+                    {Object.entries(grouped).map(([group, members]) => (
+                        <div
+                            key={group}
+                            className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 space-y-3"
+                        >
+                            <h2 className="text-sm font-semibold text-slate-100">
+                                {group}
+                            </h2>
+                            <div className="flex flex-wrap gap-3">
+                                {members.map((member) => (
+                                    <div
+                                        key={member.job}
+                                        className="w-20 space-y-1 text-center text-xs text-slate-200"
+                                    >
+                                        <img
+                                            src={`/images/character/${member.image}.PNG`}
+                                            alt={member.job}
+                                            className="mx-auto h-12 w-12 rounded bg-slate-800 object-contain"
+                                        />
+                                        <p className="truncate">{member.job}</p>
                                     </div>
-                                ))
-                            }
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))
-            }
-        </>
+                    ))}
+                </section>
+            </div>
+        </div>
     );
 }

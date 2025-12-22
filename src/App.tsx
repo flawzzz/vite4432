@@ -7,12 +7,16 @@ import Weapon from './pages/Weapon.tsx';
 import SetEffect from './pages/SetEffect.tsx';
 import SetEffectSimulator from './pages/SetEffectSimulator.tsx';
 import DamageSimulator from './pages/DamageSimulator.tsx';
+import AppHub from './pages/AppHub.tsx';
+import Guide from './pages/Guide.tsx';
+import Privacy from './pages/Privacy.tsx';
+import RootLayout from "./components/RootLayout";
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<RootLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/character" element={<Character />} />
@@ -20,9 +24,12 @@ function App() {
           <Route path='/set' element={<SetEffect />} />
           <Route path='/effect_simulator' element={<SetEffectSimulator />} />
           <Route path='/damage_simulator' element={<DamageSimulator />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+          <Route path='/app' element={<AppHub />} />
+          <Route path='/guide' element={<Guide />} />
+          <Route path='/privacy' element={<Privacy />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 

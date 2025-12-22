@@ -78,7 +78,6 @@ function calcFinalDamage(skillDamage: number, stats: StatInputs): number {
         *0.384
         ;
 
-    console.log(ret)
     return ret;    
 }
 
@@ -138,7 +137,11 @@ export default function DamageSimulator() {
     }, [selectedJob, allJobs]);
 
     if (!characters || !skills) {
-        return <p>loading...</p>;
+        return (
+            <div className="flex flex-1 items-center justify-center px-4 py-8 text-slate-300">
+                loading...
+            </div>
+        );
     }
 
     const jobSkills = skills.filter((s) => s.job === selectedJob);
@@ -195,14 +198,15 @@ export default function DamageSimulator() {
     };
 
     return (
-        <div className="flex flex-col gap-6">
-            <h1 className="text-2xl font-bold">데미지 시뮬레이터</h1>
+        <div className="flex flex-1 flex-col px-4 py-8">
+            <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+            <h1 className="text-2xl font-semibold tracking-tight">데미지 시뮬레이터</h1>
 
             {/* 직업 선택 */}
             <section className="space-y-2">
                 <h2 className="text-lg font-semibold">1. 직업 선택</h2>
                 <select
-                    className="border rounded px-2 py-1"
+                    className="w-full max-w-xs rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
                     value={selectedJob}
                     onChange={(e) => setSelectedJob(e.target.value)}
                 >
@@ -217,7 +221,7 @@ export default function DamageSimulator() {
             {/* 스탯 입력 */}
             <section className="space-y-2">
                 <h2 className="text-lg font-semibold">2. 스탯 입력</h2>
-                <p className="text-sm text-gray-600">
+                <p className="text-xs text-slate-400">
                     모든 % 수치는 "퍼센트" 기준으로 입력해주세요. 예) 92% → 92
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -225,7 +229,7 @@ export default function DamageSimulator() {
                         <span>물리/마법 공격력 (%)</span>
                         <input
                             type="number"
-                            className="border rounded px-2 py-1"
+                            className="rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
                             value={statInputs.attack || ""}
                             onChange={(e) => handleStatChange("attack", e.target.value)}
                         />
@@ -234,7 +238,7 @@ export default function DamageSimulator() {
                         <span>데미지 증가 (%)</span>
                         <input
                             type="number"
-                            className="border rounded px-2 py-1"
+                            className="rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
                             value={statInputs.damageIncrease || ""}
                             onChange={(e) =>
                                 handleStatChange("damageIncrease", e.target.value)
@@ -245,7 +249,7 @@ export default function DamageSimulator() {
                         <span>공격 시 추가 데미지 (%)</span>
                         <input
                             type="number"
-                            className="border rounded px-2 py-1"
+                            className="rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
                             value={statInputs.extraDamageOnHit || ""}
                             onChange={(e) =>
                                 handleStatChange("extraDamageOnHit", e.target.value)
@@ -256,7 +260,7 @@ export default function DamageSimulator() {
                         <span>물리/마법 크리티컬 데미지 (%)</span>
                         <input
                             type="number"
-                            className="border rounded px-2 py-1"
+                            className="rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
                             value={statInputs.critDamage || ""}
                             onChange={(e) =>
                                 handleStatChange("critDamage", e.target.value)
@@ -267,7 +271,7 @@ export default function DamageSimulator() {
                         <span>스킬 공격력 증가 (%)</span>
                         <input
                             type="number"
-                            className="border rounded px-2 py-1"
+                            className="rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
                             value={statInputs.skillAttackIncrease || ""}
                             onChange={(e) =>
                                 handleStatChange("skillAttackIncrease", e.target.value)
@@ -278,7 +282,7 @@ export default function DamageSimulator() {
                         <span>모든 타입 피해 증가 (%)</span>
                         <input
                             type="number"
-                            className="border rounded px-2 py-1"
+                            className="rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
                             value={statInputs.allTypeDamage || ""}
                             onChange={(e) =>
                                 handleStatChange("allTypeDamage", e.target.value)
@@ -289,7 +293,7 @@ export default function DamageSimulator() {
                         <span>최고 속성 강화 (수치)</span>
                         <input
                             type="number"
-                            className="border rounded px-2 py-1"
+                            className="rounded-lg border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-100 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
                             value={statInputs.elementEnhance || ""}
                             onChange={(e) =>
                                 handleStatChange("elementEnhance", e.target.value)
@@ -487,6 +491,7 @@ export default function DamageSimulator() {
                     </div>
                 </section>
             )}
+            </div>
         </div>
     );
 }

@@ -1,28 +1,40 @@
-import { Link } from "react-router-dom";
+import { FormEvent, useState } from "react";
 
 export default function Home() {
+    const [query, setQuery] = useState("");
+
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        if (!query.trim()) return;
+        // 실제 검색은 향후 구현
+        console.log("search:", query.trim());
+    };
+
     return (
-        <>
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-                <nav className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-                        <h1 className="text-2xl font-bold text-indigo-600">Dunmoa</h1>
-                        던파모바일 모아보기, 던모아
-                        <br />
-                        시즌3 ACT.1 죽은자의 성
-                        <div className="space-x-4 flex items-center">
-                            <Link to="/" className="text-gray-700 hover:text-indigo-600 font-medium">Dunmoa </Link>
-                            <Link to="/about" className="text-gray-700 hover:text-indigo-600 font-medium">About </Link>
-                            <Link to="/privacy" className="text-gray-700 hover:text-indigo-600 font-medium">Privacy </Link>
-                            <Link to="/character" className="text-gray-700 hover:text-indigo-600 font-medium">고유 효과 </Link>
-                            <Link to="/set" className="text-gray-700 hover:text-indigo-600 font-medium">아이템 세트 효과</Link>
-                            <Link to="/weapon" className="text-gray-700 hover:text-indigo-600 font-medium">무기 </Link>
-                            <Link to="/effect_simulator" className="text-gray-700 hover:text-indigo-600 font-medium">아이템 시뮬레이터 </Link>
-                            <Link to="/damage_simulator" className="text-gray-700 hover:text-indigo-600 font-medium">데미지 시뮬레이터 </Link>
-                        </div>
+        <div className="flex flex-1 items-center justify-center px-4">
+            <div className="w-full max-w-xl space-y-6 text-center">
+                <div className="space-y-2">
+                    <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                        던모아 - 던파모바일 모아보기
+                    </h1>
+                    <p className="text-xs text-slate-400 sm:text-sm">
+                        캐릭터, 세트 아이템, 무기, 옵션을 한 번에 찾아보세요.
+                        </p>
+                </div>
+                        <div className="flex flex-1 flex-col">
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-3">
+                    <div className="relative">
+                        <input
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            className="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 pr-12 text-sm text-slate-100 placeholder:text-slate-500 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+                            placeholder="예) 어느 말괄량이, 인챈트리스, 버블 반바지..."
+                        />
                     </div>
-                </nav>
+                </form>
             </div>
-        </>
+        </div>
     );
 }
