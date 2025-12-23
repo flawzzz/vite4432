@@ -48,6 +48,15 @@ export default function AppHub() {
             </p>
           </Link>
           <Link
+            to="/item"
+            className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 hover:border-indigo-500/70 hover:bg-slate-900"
+          >
+            <h2 className="text-sm font-semibold">아이템 정보</h2>
+            <p className="mt-1 text-xs text-slate-400">
+              세트 효과 기준으로 아이템을 모아봅니다.
+            </p>
+          </Link>
+          <Link
             to="/effect_simulator"
             className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 hover:border-indigo-500/70 hover:bg-slate-900"
           >

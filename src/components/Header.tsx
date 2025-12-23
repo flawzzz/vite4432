@@ -13,14 +13,14 @@ export default function Header() {
         <div className="flex items-center gap-2 text-[0.7rem] text-slate-300">
           <Link
             to="/app"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 text-[0.65rem] font-semibold hover:border-indigo-400 hover:text-indigo-200"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 text-[0.65rem] font-semibold hover:border-indigo-400 hover:text-indigo-200 focus:outline-none focus:ring-0 focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
             aria-label="Dunmoa APP"
           >
             A
           </Link>
           <Link
             to="/guide"
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 text-[0.65rem] font-semibold hover:border-indigo-400 hover:text-indigo-200"
+            className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-700 bg-slate-900/80 text-[0.65rem] font-semibold hover:border-indigo-400 hover:text-indigo-200 focus:outline-none focus:ring-0 focus-visible:ring-2 focus-visible:ring-indigo-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
             aria-label="Guide"
           >
             G

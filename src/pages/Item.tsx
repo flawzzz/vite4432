@@ -1,26 +1,36 @@
 import { useEffect, useMemo, useState } from "react";
 
-export default function WeaponPage() {
-
-    interface WeaponData {
+export default function ItemPage() {
+    interface ItemData {
         name: string;
         type: string;
-        available: string;
-        basic_info: string;
         effect: string;
+        set_id: string;
+        set_effect: string;
         image: string;
     }
 
-    const [data, setData] = useState<WeaponData[] | null>(null);
-    const [selectedJob, setSelectedJob] = useState<string | null>(null);
-    const [selectedWeapon, setSelectedWeapon] = useState<WeaponData | null>(null);
+    const [data, setData] = useState<ItemData[] | null>(null);
+    const [selectedSetId, setSelectedSetId] = useState<string | null>(null);
+    const [selectedItem, setSelectedItem] = useState<ItemData | null>(null);
+    const [query, setQuery] = useState("");
+    const [showAllTags, setShowAllTags] = useState(false);
 
-    const jobTags = useMemo(() => {
+    const TAG_COLLAPSE_COUNT = 12;
+
+    function normalizeText(value: unknown): string {
+        return String(value ?? "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .toLowerCase();
+    }
+
+    const setTags = useMemo(() => {
         if (!data) return [] as string[];
         const tags = Array.from(
             new Set(
                 data
-                    .map((w) => (w.available ?? "").trim())
+                    .map((i) => (i.set_id ?? "").trim())
                     .filter((v) => v.length > 0)
             )
         );
@@ -28,19 +38,31 @@ export default function WeaponPage() {
         return tags;
     }, [data]);
 
+    const visibleTags = useMemo(() => {
+        if (showAllTags) return setTags;
+        return setTags.slice(0, TAG_COLLAPSE_COUNT);
+    }, [setTags, showAllTags]);
+
+    const normalizedQuery = useMemo(() => normalizeText(query), [query]);
+    const shouldSearch = normalizedQuery.length >= 2;
+
     const filteredData = useMemo(() => {
         if (!data) return null;
-        if (!selectedJob) return data;
-        return data.filter((w) => (w.available ?? "").trim() === selectedJob);
-    }, [data, selectedJob]);
+        let list = data;
+        if (selectedSetId) {
+            list = list.filter((i) => (i.set_id ?? "").trim() === selectedSetId);
+        }
 
-    const toggleJob = (job: string) => {
-        setSelectedJob((prev) => (prev === job ? null : job));
-    };
+        if (!shouldSearch) return list;
+        return list.filter((i) => {
+            const hay = `${i.name} ${i.type} ${i.set_id} ${i.effect} ${i.set_effect}`;
+            return normalizeText(hay).includes(normalizedQuery);
+        });
+    }, [data, normalizedQuery, selectedSetId, shouldSearch]);
 
     useEffect(() => {
         async function load() {
-            const res = await fetch("/data/weapon.json");
+            const res = await fetch("/data/item.json");
             const json = await res.json();
             setData(json);
         }
@@ -48,13 +70,13 @@ export default function WeaponPage() {
     }, []);
 
     useEffect(() => {
-        if (!selectedWeapon) return;
+        if (!selectedItem) return;
         const onKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") setSelectedWeapon(null);
+            if (e.key === "Escape") setSelectedItem(null);
         };
         window.addEventListener("keydown", onKeyDown);
         return () => window.removeEventListener("keydown", onKeyDown);
-    }, [selectedWeapon]);
+    }, [selectedItem]);
 
     if (!data) {
         return (
@@ -69,95 +91,119 @@ export default function WeaponPage() {
             <div className="mx-auto w-full max-w-5xl space-y-6">
                 <header className="space-y-1">
                     <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-                        무기 정보
+                        아이템 정보
                     </h1>
                     <p className="text-xs text-slate-400 sm:text-sm">
-                        직업별로 사용 가능한 무기들을 간단한 카드 형태로 정리했습니다.
+                        세트 효과(세트 이름) 기준으로 아이템을 태그로 분류했습니다.
                     </p>
                 </header>
+
+                <section className="space-y-2">
+                    <input
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        className="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+                        placeholder="아이템 이름/효과/세트명으로 검색 (2글자 이상)"
+                    />
+                    <p className="text-[11px] text-slate-500">
+                        2글자 이상 입력하면 필터링됩니다.
+                    </p>
+                </section>
 
                 <section className="flex flex-wrap gap-2">
                     <button
                         type="button"
-                        onClick={() => setSelectedJob(null)}
+                        onClick={() => setSelectedSetId(null)}
                         className={
-                            !selectedJob
+                            !selectedSetId
                                 ? "rounded-full border border-slate-600 bg-slate-800 px-3 py-1 text-xs text-slate-100"
                                 : "rounded-full border border-slate-800 bg-slate-900/70 px-3 py-1 text-xs text-slate-300 hover:border-slate-700"
                         }
                     >
                         전체
                     </button>
-                    {jobTags.map((job) => {
-                        const active = selectedJob === job;
+                    {visibleTags.map((tag) => {
+                        const active = selectedSetId === tag;
                         return (
                             <button
-                                key={job}
+                                key={tag}
                                 type="button"
-                                onClick={() => toggleJob(job)}
+                                onClick={() => setSelectedSetId((prev) => (prev === tag ? null : tag))}
                                 className={
                                     active
                                         ? "rounded-full border border-slate-600 bg-slate-800 px-3 py-1 text-xs text-slate-100"
                                         : "rounded-full border border-slate-800 bg-slate-900/70 px-3 py-1 text-xs text-slate-300 hover:border-slate-700"
                                 }
                             >
-                                {job}
+                                {tag}
                             </button>
                         );
                     })}
+
+                    {setTags.length > TAG_COLLAPSE_COUNT && (
+                        <button
+                            type="button"
+                            onClick={() => setShowAllTags((prev) => !prev)}
+                            className="rounded-full border border-slate-800 bg-slate-900/70 px-3 py-1 text-xs text-slate-300 hover:border-slate-700"
+                        >
+                            {showAllTags ? "less" : "more"}
+                        </button>
+                    )}
                 </section>
 
                 <section className="grid gap-4 sm:grid-cols-3 md:grid-cols-4">
-                    {filteredData?.map((weapon) => (
+                    {filteredData?.map((item) => (
                         <button
-                            key={weapon.name + weapon.type}
+                            key={`${item.set_id}-${item.image}-${item.name}`}
                             type="button"
-                            onClick={() => setSelectedWeapon(weapon)}
+                            onClick={() => setSelectedItem(item)}
                             className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3 text-center text-xs text-slate-200 space-y-2 hover:border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-600"
                         >
                             <img
-                                src={`/images/weapon/weapon_${weapon.image}.png`}
-                                alt={weapon.name}
+                                src={`/images/item/item_${item.image}.png`}
+                                alt={item.name}
                                 className="mx-auto h-14 w-14 rounded bg-slate-800 object-contain"
                             />
-                            <p className="font-semibold truncate">{weapon.name}</p>
-                            <p className="text-[0.7rem] text-slate-400 truncate">{weapon.type}</p>
+                            <p className="font-semibold truncate">{item.name}</p>
+                            <p className="text-[0.7rem] text-slate-400 truncate">
+                                {item.type} · {item.set_id}
+                            </p>
                         </button>
                     ))}
                 </section>
             </div>
 
-            {selectedWeapon && (
+            {selectedItem && (
                 <div
                     className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8"
                     role="dialog"
                     aria-modal="true"
-                    aria-label={`${selectedWeapon.name} 상세 정보`}
+                    aria-label={`${selectedItem.name} 상세 정보`}
                 >
                     <button
                         type="button"
                         className="absolute inset-0 bg-slate-950/70"
-                        onClick={() => setSelectedWeapon(null)}
+                        onClick={() => setSelectedItem(null)}
                         aria-label="닫기"
                     />
                     <div className="relative w-full max-w-2xl rounded-2xl border border-slate-800 bg-slate-900 text-slate-200 shadow-xl">
                         <div className="flex items-start gap-3 border-b border-slate-800 p-4">
                             <img
-                                src={`/images/weapon/weapon_${selectedWeapon.image}.png`}
-                                alt={selectedWeapon.name}
+                                src={`/images/item/item_${selectedItem.image}.png`}
+                                alt={selectedItem.name}
                                 className="h-14 w-14 shrink-0 rounded bg-slate-800 object-contain"
                             />
                             <div className="min-w-0 flex-1">
                                 <p className="truncate text-base font-semibold">
-                                    {selectedWeapon.name}
+                                    {selectedItem.name}
                                 </p>
                                 <p className="mt-0.5 text-xs text-slate-400">
-                                    {selectedWeapon.available} · {selectedWeapon.type}
+                                    {selectedItem.type} · {selectedItem.set_id}
                                 </p>
                             </div>
                             <button
                                 type="button"
-                                onClick={() => setSelectedWeapon(null)}
+                                onClick={() => setSelectedItem(null)}
                                 className="rounded-lg border border-slate-800 bg-slate-900/70 px-2 py-1 text-xs text-slate-300 hover:border-slate-700"
                             >
                                 닫기
@@ -167,21 +213,23 @@ export default function WeaponPage() {
                         <div className="max-h-[70vh] space-y-4 overflow-auto p-4 text-sm">
                             <div>
                                 <p className="mb-1 text-xs font-semibold text-slate-300">
-                                    기본 정보
-                                </p>
-                                <p className="whitespace-pre-wrap text-xs text-slate-200">
-                                    {selectedWeapon.basic_info}
-                                </p>
-                            </div>
-
-                            <div>
-                                <p className="mb-1 text-xs font-semibold text-slate-300">
                                     효과
                                 </p>
                                 <p className="whitespace-pre-wrap text-xs text-slate-200">
-                                    {selectedWeapon.effect}
+                                    {selectedItem.effect}
                                 </p>
                             </div>
+
+                            {selectedItem.set_effect?.trim() && (
+                                <div>
+                                    <p className="mb-1 text-xs font-semibold text-slate-300">
+                                        세트 효과
+                                    </p>
+                                    <p className="whitespace-pre-wrap text-xs text-slate-200">
+                                        {selectedItem.set_effect}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

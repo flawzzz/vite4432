@@ -6,14 +6,32 @@ type Character = {
     group: string;
 };
 
-type Item = {
+type ItemType = "방어구" | "악세사리" | "특수장비";
+
+type Part =
+    | "머리어깨"
+    | "상의"
+    | "바지"
+    | "벨트"
+    | "신발"
+    | "팔찌"
+    | "목걸이"
+    | "반지"
+    | "귀걸이"
+    | "보조장비"
+    | "마법석";
+
+type RawItem = {
     name: string;
-    part: string; // 상의, 바지, 머리어깨, 벨트, 신발, 팔찌, 목걸이, 반지, 귀걸이, 보조장비, 마법석
-    rank: string;
-    prefix: string;
+    type: ItemType;
     effect: string;
-    set: string;
-    image?: string; // 섬네일 이미지 파일명 (가정)
+    set_id: string;
+    set_effect: string;
+    image: string;
+};
+
+type Item = RawItem & {
+    part: Part;
 };
 
 type Weapon = {
@@ -22,14 +40,6 @@ type Weapon = {
     available: string;
     basic_info: string;
     effect: string;
-    image: string;
-};
-
-type SetData = {
-    name: string;
-    prefix: string;
-    set_effect: string;
-    type: string;
     image: string;
 };
 
@@ -50,7 +60,7 @@ type SlotId =
 type SlotDef = {
     id: SlotId;
     label: string;
-    part: string | null; // item.json 의 part 값 (무기는 null)
+    part: Part | null; // item.json 에는 part가 없으므로 로딩 시 추론하여 붙임 (무기는 null)
 };
 
 const STORAGE_KEY = "setEffectSimulatorState_v1";
@@ -93,8 +103,8 @@ const ALL_SLOT_ORDER: SlotId[] = [
 type PersistedSlotInfo = {
     kind: "item" | "weapon";
     name: string;
-    part?: string;
-    prefix?: string;
+    part?: Part;
+    setId?: string;
 };
 
 type PersistedSlots = Partial<Record<SlotId, PersistedSlotInfo>>;
@@ -140,6 +150,136 @@ function extractSetSegments(text: string): { three?: string; five?: string } {
         three: segments["3"]?.join("\n"),
         five: segments["5"]?.join("\n"),
     };
+}
+
+const EXPECTED_PARTS_BY_ITEM_TYPE: Record<ItemType, Part[]> = {
+    방어구: ["머리어깨", "상의", "바지", "벨트", "신발"],
+    악세사리: ["팔찌", "목걸이", "반지"],
+    특수장비: ["귀걸이", "보조장비", "마법석"],
+};
+
+const PART_KEYWORDS: Record<Part, string[]> = {
+    머리어깨: [
+        "머리어깨",
+        "헤드기어",
+        "고글",
+        "헬름",
+        "헬멧",
+        "햇",
+        "모자",
+        "캡",
+        "마스크",
+        "두건",
+        "후드",
+        "머리",
+        "뿔",
+        "장식",
+    ],
+    상의: ["상의", "자켓", "자킷", "재킷", "코트", "아머", "메일", "플레이트 메일"],
+    바지: ["하의", "바지", "반바지", "팬츠", "스커트", "레깅스", "각반"],
+    벨트: ["벨트", "허리", "코일"],
+    신발: ["신발", "부츠", "슈즈", "사바톤", "그리브"],
+    팔찌: ["팔찌", "브레이슬릿"],
+    목걸이: ["목걸이", "네크리스", "펜던트"],
+    반지: ["반지", "링"],
+    귀걸이: ["귀걸이", "이어링"],
+    보조장비: ["보조장비"],
+    마법석: ["마법석"],
+};
+
+function scorePart(name: string, part: Part): number {
+    const n = (name || "").toLowerCase();
+    let score = 0;
+
+    // exact part token gets a higher weight
+    if (n.includes(part)) score += 10;
+
+    for (const kw of PART_KEYWORDS[part]) {
+        const k = kw.toLowerCase();
+        if (k && n.includes(k)) score += 3;
+    }
+
+    return score;
+}
+
+function assignPartsForGroup(group: RawItem[]): Item[] {
+    if (!group.length) return [];
+
+    const itemType = group[0].type;
+    const expectedParts = EXPECTED_PARTS_BY_ITEM_TYPE[itemType];
+    if (!expectedParts || expectedParts.length !== group.length) {
+        // 데이터가 예상과 다르면, 안전하게 part를 모두 "상의"로 두고 진행 (필터가 막히지 않도록)
+        return group.map((it) => ({ ...it, part: "상의" } as Item));
+    }
+
+    const scores = group.map((it) =>
+        expectedParts.map((p) => scorePart(it.name, p))
+    );
+
+    // pick items in an order that reduces branching: highest max score first
+    const order = [...group.keys()].sort((a, b) => {
+        const aMax = Math.max(...scores[a]);
+        const bMax = Math.max(...scores[b]);
+        return bMax - aMax;
+    });
+
+    let bestTotal = -Infinity;
+    let bestAssign: number[] | null = null; // for each item index, selected part index
+
+    const used = new Array(expectedParts.length).fill(false);
+    const cur: number[] = new Array(group.length).fill(-1);
+
+    const dfs = (i: number, total: number) => {
+        if (i === order.length) {
+            if (total > bestTotal) {
+                bestTotal = total;
+                bestAssign = [...cur];
+            }
+            return;
+        }
+
+        const itemIdx = order[i];
+
+        // try parts with higher score first
+        const partIndices = [...expectedParts.keys()].sort(
+            (a, b) => scores[itemIdx][b] - scores[itemIdx][a]
+        );
+
+        for (const partIdx of partIndices) {
+            if (used[partIdx]) continue;
+            used[partIdx] = true;
+            cur[itemIdx] = partIdx;
+            dfs(i + 1, total + scores[itemIdx][partIdx]);
+            used[partIdx] = false;
+            cur[itemIdx] = -1;
+        }
+    };
+
+    dfs(0, 0);
+
+    // Fallback should not happen, but keep deterministic behavior
+    const finalAssign = bestAssign ?? group.map((_, idx) => idx);
+
+    return group.map((it, idx) => ({
+        ...it,
+        part: expectedParts[finalAssign[idx]] ?? expectedParts[0],
+    }));
+}
+
+function deriveItemsWithParts(rawItems: RawItem[]): Item[] {
+    const groups: Record<string, RawItem[]> = {};
+    for (const it of rawItems) {
+        const key = `${it.type}::${it.set_id}`;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(it);
+    }
+
+    const derived: Item[] = [];
+    Object.values(groups).forEach((group) => {
+        derived.push(...assignPartsForGroup(group));
+    });
+
+    return derived;
 }
 
 function getThumbnailSrc(value: Item | Weapon): string | null {
@@ -225,7 +365,6 @@ export default function SetEffectSimulator() {
     const [characters, setCharacters] = useState<Character[]>([]);
     const [items, setItems] = useState<Item[]>([]);
     const [weapons, setWeapons] = useState<Weapon[]>([]);
-    const [sets, setSets] = useState<SetData[]>([]);
 
     const [selectedJob, setSelectedJob] = useState<string>("");
     const [activeSlot, setActiveSlot] = useState<SlotId | null>(null);
@@ -240,21 +379,18 @@ export default function SetEffectSimulator() {
     useEffect(() => {
         async function loadData() {
             try {
-                const [characterRes, itemRes, setRes, weaponRes] = await Promise.all([
+                const [characterRes, itemRes, weaponRes] = await Promise.all([
                     fetch("/data/character.json"),
                     fetch("/data/item.json"),
-                    fetch("/data/set.json"),
                     fetch("/data/weapon.json"),
                 ]);
 
                 const characterData: Character[] = await characterRes.json();
-                const itemData: Item[] = await itemRes.json();
-                const setData: SetData[] = await setRes.json();
+                const rawItemData: RawItem[] = await itemRes.json();
                 const weaponData: Weapon[] = await weaponRes.json();
 
                 setCharacters(characterData.filter((c) => c.job));
-                setItems(itemData.filter((i) => i.name));
-                setSets(setData.filter((s) => s.name));
+                setItems(deriveItemsWithParts(rawItemData).filter((i) => i.name));
                 setWeapons(weaponData.filter((w) => w.name));
             } catch (e) {
                 console.error("세트 효과 데이터 로딩 실패", e);
@@ -300,7 +436,7 @@ export default function SetEffectSimulator() {
                             (i) =>
                                 i.name === info.name &&
                                 (!info.part || i.part === info.part) &&
-                                (i.prefix || "") === (info.prefix || "")
+                                (!info.setId || i.set_id === info.setId)
                         );
                         if (item) next[slotId] = item;
                     }
@@ -341,43 +477,39 @@ export default function SetEffectSimulator() {
     };
 
     const activeSetEffects = useMemo<ActiveSetEffect[]>(() => {
-        if (!sets.length) return [];
-
         const counts: Record<string, number> = {};
+        const anySelectedBySetId: Record<string, Item> = {};
 
         Object.values(selectedSlots).forEach((value) => {
             if (!value) return;
-            if ("set" in value && value.set) {
-                const setName = value.set;
-                counts[setName] = (counts[setName] || 0) + 1;
-            }
+            if ("basic_info" in value) return; // weapon
+            const item = value as Item;
+            if (!item.set_id) return;
+            counts[item.set_id] = (counts[item.set_id] || 0) + 1;
+            anySelectedBySetId[item.set_id] = item;
         });
 
         const results: ActiveSetEffect[] = [];
 
-        Object.entries(counts).forEach(([setName, count]) => {
+        Object.entries(counts).forEach(([setId, count]) => {
             if (count < 3) return;
 
-            const candidates = sets.filter((s) => s.name === setName);
-            if (!candidates.length) return;
+            const fromSelected = anySelectedBySetId[setId];
+            const fromAll = items.find((i) => i.set_id === setId);
+            const baseEffect = fromSelected?.set_effect || fromAll?.set_effect;
+            if (!baseEffect) return;
 
-            const base =
-                candidates.find((s) => (s.prefix || "") === "") ||
-                candidates[0];
-
-            if (!base.set_effect) return;
-
-            const segments = extractSetSegments(base.set_effect);
+            const segments = extractSetSegments(baseEffect);
             const three = count >= 3 ? segments.three : undefined;
             const five = count >= 5 ? segments.five : undefined;
 
             if (!three && !five) return;
 
-            results.push({ name: setName, count, three, five });
+            results.push({ name: setId, count, three, five });
         });
 
         return results;
-    }, [selectedSlots, sets]);
+    }, [selectedSlots, items]);
 
     const combinedEffects = useMemo(() => {
         const effects: string[] = [];
@@ -415,7 +547,7 @@ export default function SetEffectSimulator() {
                             kind: "item",
                             name: item.name,
                             part: item.part,
-                            prefix: item.prefix,
+                            setId: item.set_id,
                         };
                     }
                 }
@@ -433,7 +565,7 @@ export default function SetEffectSimulator() {
 
     if (!characters.length && !items.length && !weapons.length) {
         return (
-            <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center">
+            <div className="flex flex-1 items-center justify-center px-4 py-10">
                 <p>loading...</p>
             </div>
         );
@@ -464,7 +596,7 @@ export default function SetEffectSimulator() {
             } else {
                 const item = selected as Item;
                 title = item.name;
-                sub = `${item.set || ""}${item.prefix ? ` / ${item.prefix}` : ""}`.trim();
+                sub = item.set_id || "";
             }
         }
 
@@ -619,9 +751,7 @@ export default function SetEffectSimulator() {
                                         const isWeapon = "basic_info" in value;
                                         const key = isWeapon
                                             ? `weapon-${value.name}`
-                                            : `item-${(value as Item).part}-${value.name}-${
-                                                  (value as Item).prefix
-                                              }`;
+                                            : `item-${(value as Item).part}-${(value as Item).set_id}-${value.name}`;
                                         const thumbSrc = getThumbnailSrc(value as Item | Weapon);
 
                                         return (
@@ -654,14 +784,9 @@ export default function SetEffectSimulator() {
                                                         <div className="font-semibold truncate">
                                                             {value.name || "이름 없음"}
                                                         </div>
-                                                        {"set" in value && value.set && (
+                                                        {"set_id" in value && (value as Item).set_id && (
                                                             <div className="text-[11px] text-amber-300 truncate">
-                                                                {value.set}
-                                                            </div>
-                                                        )}
-                                                        {"prefix" in value && value.prefix && (
-                                                            <div className="text-[11px] text-sky-300 truncate">
-                                                                {value.prefix}
+                                                                {(value as Item).set_id}
                                                             </div>
                                                         )}
                                                         <div className="mt-1 text-[11px] text-slate-300 whitespace-pre-wrap line-clamp-3">
