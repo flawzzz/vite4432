@@ -67,10 +67,6 @@ function rollOutcomeDetailed(p: Prob, rng: () => number = Math.random): { outcom
     return { outcome: "BREAK", roll };
 }
 
-function rollOutcome(p: Prob, rng: () => number = Math.random): Outcome {
-    return rollOutcomeDetailed(p, rng).outcome;
-}
-
 function transition(s: State, o: Outcome): State {
     if (o === "FAIL") {
         return { level: clampLevel(s.level - 1), failGuard: (Math.min(2, s.failGuard + 1) as 0 | 1 | 2) };
