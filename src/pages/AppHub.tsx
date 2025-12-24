@@ -83,7 +83,7 @@ export default function AppHub() {
               </p>
             </Link>
             <Link
-              to="/virtual_refine"
+              to="/refine_simulator"
               className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 hover:border-indigo-500/70 hover:bg-slate-900"
             >
               <h2 className="text-sm font-semibold">연마 시뮬레이터</h2>
