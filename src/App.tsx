@@ -12,7 +12,7 @@ import AppHub from './pages/AppHub.tsx';
 import Guide from './pages/Guide.tsx';
 import Privacy from './pages/Privacy.tsx';
 import RecordPage from './pages/Record.tsx';
-import VirtualRefinePage from './pages/VirtualRefine.tsx';
+import RefineSimulator from './pages/RefineSimulator.tsx';
 import RootLayout from "./components/RootLayout";
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
           <Route path='/damage_simulator' element={<DamageSimulator />} />
           <Route path='/app' element={<AppHub />} />
           <Route path='/record' element={<RecordPage />} />
-          <Route path='/virtual_refine' element={<VirtualRefinePage />} />
+          <Route path='/refine_simulator' element={<RefineSimulator />} />
           <Route path='/guide' element={<Guide />} />
           <Route path='/privacy' element={<Privacy />} />
         </Route>

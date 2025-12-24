@@ -79,8 +79,8 @@ function effectAnim(outcome: Outcome): string {
     return "animate-bounce";
 }
 
-export default function VirtualRefinePage() {
-    const [state, setState] = useState<State>({ level: 1, failGuard: 0 });
+export default function RefineSimulator() {
+    const [state, setState] = useState<State>({ level: 0, failGuard: 0 });
     const [logs, setLogs] = useState<LogEntry[]>([]);
     const [totalAttempts, setTotalAttempts] = useState(0);
     const [effect, setEffect] = useState<ClickEffect | null>(null);
@@ -131,7 +131,7 @@ export default function VirtualRefinePage() {
     }
 
     function handleReset() {
-        setState({ level: 1, failGuard: 0 });
+        setState({ level: 0, failGuard: 0 });
         setLogs([]);
         setTotalAttempts(0);
         attemptCounterRef.current = 0;
@@ -147,7 +147,7 @@ export default function VirtualRefinePage() {
             <div className="mx-auto w-full max-w-5xl space-y-6">
                 <div className="flex items-center justify-between gap-4">
                     <div className="space-y-1">
-                        <h1 className="text-xl font-semibold tracking-tight text-slate-100 sm:text-2xl">가상 연마기</h1>
+                        <h1 className="text-xl font-semibold tracking-tight text-slate-100 sm:text-2xl">연마 시뮬레이터</h1>
                         <p className="text-xs text-slate-400 sm:text-sm">연마 시도 결과를 로그로 기록합니다.</p>
                     </div>
                     <img
