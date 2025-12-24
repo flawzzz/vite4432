@@ -212,9 +212,6 @@ export default function Home() {
                         )}
                     </div>
 
-                    <p className="text-[11px] text-slate-500">
-                        2글자 이상 입력하면 이름/효과로 검색됩니다.
-                    </p>
                 </form>
             </div>
 

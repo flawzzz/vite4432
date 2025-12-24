@@ -11,12 +11,11 @@ export default function ItemPage() {
     }
 
     const [data, setData] = useState<ItemData[] | null>(null);
-    const [selectedSetId, setSelectedSetId] = useState<string | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<
+        "방어구" | "악세사리" | "특수장비" | null
+    >(null);
     const [selectedItem, setSelectedItem] = useState<ItemData | null>(null);
     const [query, setQuery] = useState("");
-    const [showAllTags, setShowAllTags] = useState(false);
-
-    const TAG_COLLAPSE_COUNT = 12;
 
     function normalizeText(value: unknown): string {
         return String(value ?? "")
@@ -25,23 +24,21 @@ export default function ItemPage() {
             .toLowerCase();
     }
 
-    const setTags = useMemo(() => {
-        if (!data) return [] as string[];
-        const tags = Array.from(
-            new Set(
-                data
-                    .map((i) => (i.set_id ?? "").trim())
-                    .filter((v) => v.length > 0)
-            )
-        );
-        tags.sort((a, b) => a.localeCompare(b, "ko"));
-        return tags;
-    }, [data]);
+    const categoryTags = useMemo(
+        () => ["방어구", "악세사리", "특수장비"] as const,
+        []
+    );
 
-    const visibleTags = useMemo(() => {
-        if (showAllTags) return setTags;
-        return setTags.slice(0, TAG_COLLAPSE_COUNT);
-    }, [setTags, showAllTags]);
+    const itemCategory = (
+        item: ItemData
+    ): "방어구" | "악세사리" | "특수장비" | null => {
+        const t = (item.type ?? "").trim();
+        if (!t) return null;
+        if (t.includes("방어구")) return "방어구";
+        if (t.includes("악세")) return "악세사리";
+        if (t.includes("특수")) return "특수장비";
+        return null;
+    };
 
     const normalizedQuery = useMemo(() => normalizeText(query), [query]);
     const shouldSearch = normalizedQuery.length >= 2;
@@ -49,8 +46,8 @@ export default function ItemPage() {
     const filteredData = useMemo(() => {
         if (!data) return null;
         let list = data;
-        if (selectedSetId) {
-            list = list.filter((i) => (i.set_id ?? "").trim() === selectedSetId);
+        if (selectedCategory) {
+            list = list.filter((i) => itemCategory(i) === selectedCategory);
         }
 
         if (!shouldSearch) return list;
@@ -58,7 +55,7 @@ export default function ItemPage() {
             const hay = `${i.name} ${i.type} ${i.set_id} ${i.effect} ${i.set_effect}`;
             return normalizeText(hay).includes(normalizedQuery);
         });
-    }, [data, normalizedQuery, selectedSetId, shouldSearch]);
+    }, [data, normalizedQuery, selectedCategory, shouldSearch]);
 
     useEffect(() => {
         async function load() {
@@ -94,7 +91,7 @@ export default function ItemPage() {
                         아이템 정보
                     </h1>
                     <p className="text-xs text-slate-400 sm:text-sm">
-                        세트 효과(세트 이름) 기준으로 아이템을 태그로 분류했습니다.
+                        아이템 종류(방어구/악세사리/특수장비) 기준으로 태그로 분류했습니다.
                     </p>
                 </header>
 
@@ -113,22 +110,24 @@ export default function ItemPage() {
                 <section className="flex flex-wrap gap-2">
                     <button
                         type="button"
-                        onClick={() => setSelectedSetId(null)}
+                        onClick={() => setSelectedCategory(null)}
                         className={
-                            !selectedSetId
+                            !selectedCategory
                                 ? "rounded-full border border-slate-600 bg-slate-800 px-3 py-1 text-xs text-slate-100"
                                 : "rounded-full border border-slate-800 bg-slate-900/70 px-3 py-1 text-xs text-slate-300 hover:border-slate-700"
                         }
                     >
                         전체
                     </button>
-                    {visibleTags.map((tag) => {
-                        const active = selectedSetId === tag;
+                    {categoryTags.map((tag) => {
+                        const active = selectedCategory === tag;
                         return (
                             <button
                                 key={tag}
                                 type="button"
-                                onClick={() => setSelectedSetId((prev) => (prev === tag ? null : tag))}
+                                onClick={() =>
+                                    setSelectedCategory((prev) => (prev === tag ? null : tag))
+                                }
                                 className={
                                     active
                                         ? "rounded-full border border-slate-600 bg-slate-800 px-3 py-1 text-xs text-slate-100"
@@ -139,16 +138,6 @@ export default function ItemPage() {
                             </button>
                         );
                     })}
-
-                    {setTags.length > TAG_COLLAPSE_COUNT && (
-                        <button
-                            type="button"
-                            onClick={() => setShowAllTags((prev) => !prev)}
-                            className="rounded-full border border-slate-800 bg-slate-900/70 px-3 py-1 text-xs text-slate-300 hover:border-slate-700"
-                        >
-                            {showAllTags ? "less" : "more"}
-                        </button>
-                    )}
                 </section>
 
                 <section className="grid gap-4 sm:grid-cols-3 md:grid-cols-4">

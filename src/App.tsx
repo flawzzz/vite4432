@@ -11,6 +11,8 @@ import DamageSimulator from './pages/DamageSimulator.tsx';
 import AppHub from './pages/AppHub.tsx';
 import Guide from './pages/Guide.tsx';
 import Privacy from './pages/Privacy.tsx';
+import RecordPage from './pages/Record.tsx';
+import VirtualRefinePage from './pages/VirtualRefine.tsx';
 import RootLayout from "./components/RootLayout";
 
 function App() {
@@ -27,6 +29,8 @@ function App() {
           <Route path='/effect_simulator' element={<SetEffectSimulator />} />
           <Route path='/damage_simulator' element={<DamageSimulator />} />
           <Route path='/app' element={<AppHub />} />
+          <Route path='/record' element={<RecordPage />} />
+          <Route path='/virtual_refine' element={<VirtualRefinePage />} />
           <Route path='/guide' element={<Guide />} />
           <Route path='/privacy' element={<Privacy />} />
         </Route>
