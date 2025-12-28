@@ -23,7 +23,7 @@ export default function SetEffect() {
 
     if (!data) {
         return (
-            <div className="flex flex-1 items-center justify-center px-4 py-8 text-slate-300">
+            <div className="flex flex-1 items-center justify-center px-3 py-6 text-slate-300">
                 loading...
             </div>
         );
@@ -38,22 +38,19 @@ export default function SetEffect() {
     });
 
     return (
-        <div className="flex flex-1 flex-col px-4 py-8">
-            <div className="mx-auto w-full max-w-5xl space-y-6">
+        <div className="flex flex-1 flex-col px-3 py-6">
+            <div className="mx-auto w-full max-w-4xl space-y-4">
                 <header className="space-y-1">
                     <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-                        세트 아이템 효과
+                        세트 효과 모아보기
                     </h1>
-                    <p className="text-xs text-slate-400 sm:text-sm">
-                        세트 장비의 대표 아이콘과 이름만 심플하게 정리했습니다.
-                    </p>
                 </header>
 
-                <section className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                <section className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
                     {Object.entries(grouped).map(([name, members]) => (
                         <div
                             key={name}
-                            className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-center text-xs text-slate-200 space-y-2"
+                            className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-center text-xs text-slate-200 space-y-2"
                         >
                             <img
                                 src={`/images/set/${members[0].image}.PNG`}

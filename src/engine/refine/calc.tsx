@@ -16,6 +16,14 @@ export type RefineAttempt = {
     roll: number; // 0 <= roll < 100
 };
 
+export type RefineCost = {
+    stone: number;
+    catalyst: number;
+    rion: number;
+    gold: number;
+    terra: number;
+};
+
 const MIN_LEVEL = 0;
 const MAX_LEVEL = 9;
 
@@ -44,6 +52,7 @@ export function getProb(level: number, guardLevel: 0 | 1 | 2): Prob {
 
     const remains = [remain, remain_first, remain_second];
     const fails = [fail, fail_first, fail_second];
+
 
     return {
         success: success[lvl],
@@ -94,7 +103,38 @@ export function refineAttempt(prev: State, rng: () => number = Math.random): Ref
     return { prev: safePrev, next, outcome, prob, roll };
 }
 
-export function calc(begin_level: number, guard_level: 0 | 1 | 2): { level: number; failGuard: number } {
-    const attempt = refineAttempt({ level: begin_level, failGuard: guard_level });
-    return { level: attempt.next.level, failGuard: attempt.next.failGuard };
+
+export function getRefineCost(level: number): RefineCost {
+    const lvl = clampLevel(level);
+
+    const stone = [99, 116, 135, 157, 177, 200, 220, 240, 260, 280];
+    const catalyst = [2, 2, 2, 3, 3, 3, 4, 4, 4, 5];
+    const rion = [3, 3, 4, 4, 5, 5, 6, 6, 7, 7];
+    const gold = [6200000, 7502000, 8900700, 10427000, 12254000, 13979000, 15806000, 17781000, 19881000, 22136000];
+
+    return {
+        stone: stone[lvl],
+        catalyst: catalyst[lvl],
+        rion: rion[lvl],
+        gold: gold[lvl],
+        terra: stone[lvl] * 400 + catalyst[lvl] * 70000 + rion[lvl] * 10000 + gold[lvl] / 200,
+    };
+}
+
+
+
+
+export function calc(begin_level: number, guard_level: 0 | 1 | 2): {
+    level: number; failGuard: number
+    stone: number; catalyst: number; rion: number
+    terra: number;
+} {
+    const safeBegin = clampLevel(begin_level);
+    const attempt = refineAttempt({ level: safeBegin, failGuard: guard_level });
+    const cost = getRefineCost(safeBegin);
+    return {
+        level: attempt.next.level, failGuard: attempt.next.failGuard,
+        stone: cost.stone, catalyst: cost.catalyst, rion: cost.rion,
+        terra: cost.terra,
+    };
 }

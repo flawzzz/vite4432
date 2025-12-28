@@ -1,7 +1,7 @@
 export default function About() {
     return (
-        <div className="flex flex-1 flex-col px-4 py-10">
-            <main className="mx-auto flex w-full max-w-3xl flex-col items-center space-y-4 text-center">
+        <div className="flex flex-1 flex-col px-3 py-8">
+            <main className="mx-auto flex w-full max-w-3xl flex-col items-center space-y-3 text-center">
                 <div className="inline-flex items-center justify-center rounded-full bg-slate-900 px-3 py-1 text-xs text-slate-300 ring-1 ring-slate-700">
                     About Dunmoa
                 </div>

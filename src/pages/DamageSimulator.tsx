@@ -138,7 +138,7 @@ export default function DamageSimulator() {
 
     if (!characters || !skills) {
         return (
-            <div className="flex flex-1 items-center justify-center px-4 py-8 text-slate-300">
+            <div className="flex flex-1 items-center justify-center px-3 py-6 text-slate-300">
                 loading...
             </div>
         );
@@ -198,8 +198,8 @@ export default function DamageSimulator() {
     };
 
     return (
-        <div className="flex flex-1 flex-col px-4 py-8">
-            <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
+        <div className="flex flex-1 flex-col px-3 py-6">
+            <div className="mx-auto flex w-full max-w-4xl flex-col gap-4">
             <h1 className="text-2xl font-semibold tracking-tight">데미지 시뮬레이터</h1>
 
             {/* 직업 선택 */}

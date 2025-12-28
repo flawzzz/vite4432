@@ -58,22 +58,19 @@ export default function WeaponPage() {
 
     if (!data) {
         return (
-            <div className="flex flex-1 items-center justify-center px-4 py-8 text-slate-300">
+            <div className="flex flex-1 items-center justify-center px-3 py-6 text-slate-300">
                 loading...
             </div>
         );
     }
 
     return (
-        <div className="flex flex-1 flex-col px-4 py-8">
-            <div className="mx-auto w-full max-w-5xl space-y-6">
+        <div className="flex flex-1 flex-col px-3 py-6">
+            <div className="mx-auto w-full max-w-4xl space-y-4">
                 <header className="space-y-1">
                     <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-                        무기 정보
+                        무기 모아보기
                     </h1>
-                    <p className="text-xs text-slate-400 sm:text-sm">
-                        직업별로 사용 가능한 무기들을 간단한 카드 형태로 정리했습니다.
-                    </p>
                 </header>
 
                 <section className="flex flex-wrap gap-2">
@@ -107,13 +104,13 @@ export default function WeaponPage() {
                     })}
                 </section>
 
-                <section className="grid gap-4 sm:grid-cols-3 md:grid-cols-4">
+                <section className="grid gap-3 sm:grid-cols-3 md:grid-cols-4">
                     {filteredData?.map((weapon) => (
                         <button
                             key={weapon.name + weapon.type}
                             type="button"
                             onClick={() => setSelectedWeapon(weapon)}
-                            className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3 text-center text-xs text-slate-200 space-y-2 hover:border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-600"
+                            className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-center text-xs text-slate-200 space-y-2 hover:border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-600"
                         >
                             <img
                                 src={`/images/weapon/weapon_${weapon.image}.png`}
@@ -129,7 +126,7 @@ export default function WeaponPage() {
 
             {selectedWeapon && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8"
+                    className="fixed inset-0 z-50 flex items-center justify-center px-3 py-6"
                     role="dialog"
                     aria-modal="true"
                     aria-label={`${selectedWeapon.name} 상세 정보`}
@@ -140,8 +137,8 @@ export default function WeaponPage() {
                         onClick={() => setSelectedWeapon(null)}
                         aria-label="닫기"
                     />
-                    <div className="relative w-full max-w-2xl rounded-2xl border border-slate-800 bg-slate-900 text-slate-200 shadow-xl">
-                        <div className="flex items-start gap-3 border-b border-slate-800 p-4">
+                    <div className="relative w-full max-w-2xl rounded-xl border border-slate-800 bg-slate-900 text-slate-200 shadow-xl">
+                        <div className="flex items-start gap-3 border-b border-slate-800 p-3">
                             <img
                                 src={`/images/weapon/weapon_${selectedWeapon.image}.png`}
                                 alt={selectedWeapon.name}
@@ -164,7 +161,7 @@ export default function WeaponPage() {
                             </button>
                         </div>
 
-                        <div className="max-h-[70vh] space-y-4 overflow-auto p-4 text-sm">
+                        <div className="max-h-[70vh] space-y-3 overflow-auto p-3 text-sm">
                             <div>
                                 <p className="mb-1 text-xs font-semibold text-slate-300">
                                     기본 정보

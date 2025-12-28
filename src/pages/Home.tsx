@@ -112,7 +112,7 @@ export default function Home() {
     };
 
     return (
-        <div className="flex flex-1 items-center justify-center px-4">
+        <div className="flex flex-1 items-center justify-center px-3 py-10">
             <div className="w-full max-w-xl space-y-6 text-center">
                 <div className="space-y-2">
                     <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -127,8 +127,8 @@ export default function Home() {
                         <input
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            className="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 pr-12 text-sm text-slate-100 placeholder:text-slate-500 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
-                            placeholder="예) 어느 말괄량이, 인챈트리스, 버블 반바지..."
+                            className="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-2.5 pr-12 text-sm text-slate-100 placeholder:text-slate-500 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
+                            placeholder="예) 어느 말괄량이의 가죽 자켓"
                         />
 
                         {shouldSearch && (
@@ -217,7 +217,7 @@ export default function Home() {
 
             {selectedItem && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8"
+                    className="fixed inset-0 z-50 flex items-center justify-center px-3 py-6"
                     role="dialog"
                     aria-modal="true"
                     aria-label={`${selectedItem.name} 상세 정보`}
@@ -228,8 +228,8 @@ export default function Home() {
                         onClick={() => setSelectedItem(null)}
                         aria-label="닫기"
                     />
-                    <div className="relative w-full max-w-2xl rounded-2xl border border-slate-800 bg-slate-900 text-slate-200 shadow-xl">
-                        <div className="flex items-start gap-3 border-b border-slate-800 p-4">
+                    <div className="relative w-full max-w-2xl rounded-xl border border-slate-800 bg-slate-900 text-slate-200 shadow-xl">
+                        <div className="flex items-start gap-3 border-b border-slate-800 p-3">
                             <img
                                 src={`/images/item/item_${selectedItem.image}.png`}
                                 alt={selectedItem.name}
@@ -252,7 +252,7 @@ export default function Home() {
                             </button>
                         </div>
 
-                        <div className="max-h-[70vh] space-y-4 overflow-auto p-4 text-sm">
+                        <div className="max-h-[70vh] space-y-3 overflow-auto p-3 text-sm">
                             <div>
                                 <p className="mb-1 text-xs font-semibold text-slate-300">
                                     효과

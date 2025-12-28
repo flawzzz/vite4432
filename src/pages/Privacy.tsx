@@ -1,14 +1,14 @@
 export default function Privacy() {
   return (
-    <div className="flex flex-1 flex-col px-4 py-10">
-      <main className="mx-auto w-full max-w-3xl space-y-4">
+    <div className="flex flex-1 flex-col px-3 py-8">
+      <main className="mx-auto w-full max-w-3xl space-y-3">
         <h1 className="text-2xl font-semibold tracking-tight">개인정보처리방침</h1>
         <p className="text-sm text-slate-400">
           Dunmoa(이하 “서비스”)는 던파모바일 정보를 열람/검색/시뮬레이션하는 팬메이드 도구입니다.
           서비스는 최소한의 개인정보만 처리하며, 아래와 같이 개인정보를 처리합니다.
         </p>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-xs text-slate-300">
+        <div className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-xs text-slate-300">
           <div className="font-semibold text-slate-200">요약</div>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>회원가입/로그인 기능이 없으며, 이름/전화번호/이메일 등은 직접 수집하지 않습니다.</li>

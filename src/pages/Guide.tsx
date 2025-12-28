@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 
 export default function Guide() {
   return (
-    <div className="flex flex-1 flex-col px-4 py-8">
-      <div className="mx-auto w-full max-w-5xl space-y-8">
+    <div className="flex flex-1 flex-col px-3 py-6">
+      <div className="mx-auto w-full max-w-4xl space-y-6">
         <header className="flex items-center justify-between">
           <div className="space-y-1">
             <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Guide</h1>
@@ -19,9 +19,9 @@ export default function Guide() {
           </Link>
         </header>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {/* 던파모바일 가이드 */}
-          <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+          <section className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
             <h2 className="text-sm font-semibold">던파모바일 가이드</h2>
             <p className="mt-2 text-xs text-slate-400">
               게임 내에서 유용한 기본 정보와 세팅 방향성을 정리한 영역입니다.
@@ -35,7 +35,7 @@ export default function Guide() {
           </section>
 
           {/* 던모아 가이드 */}
-          <section className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+          <section className="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
             <h2 className="text-sm font-semibold">던모아 가이드</h2>
             <p className="mt-2 text-xs text-slate-400">
               던모아에서 제공하는 페이지와 도구를 어떻게 활용하면 좋은지 정리한 영역입니다.

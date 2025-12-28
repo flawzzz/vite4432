@@ -4,7 +4,7 @@ export default function Footer() {
 
     return (
         <footer className="border-t border-slate-800 bg-slate-950/90">
-            <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 px-4 py-3 text-[0.7rem] text-slate-500 sm:flex-row">
+            <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 px-3 py-2 text-[0.7rem] text-slate-500 sm:flex-row">
                 <span>© {new Date().getFullYear()} Dunmoa</span>
                 <div className="flex items-center gap-3">
                     <Link to="/privacy" className="hover:text-indigo-300">

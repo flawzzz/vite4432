@@ -77,22 +77,19 @@ export default function ItemPage() {
 
     if (!data) {
         return (
-            <div className="flex flex-1 items-center justify-center px-4 py-8 text-slate-300">
+            <div className="flex flex-1 items-center justify-center px-3 py-6 text-slate-300">
                 loading...
             </div>
         );
     }
 
     return (
-        <div className="flex flex-1 flex-col px-4 py-8">
-            <div className="mx-auto w-full max-w-5xl space-y-6">
+        <div className="flex flex-1 flex-col px-3 py-6">
+            <div className="mx-auto w-full max-w-4xl space-y-4">
                 <header className="space-y-1">
                     <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-                        아이템 정보
+                        아이템 모아보기
                     </h1>
-                    <p className="text-xs text-slate-400 sm:text-sm">
-                        아이템 종류(방어구/악세사리/특수장비) 기준으로 태그로 분류했습니다.
-                    </p>
                 </header>
 
                 <section className="space-y-2">
@@ -100,11 +97,7 @@ export default function ItemPage() {
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         className="w-full rounded-xl border border-slate-700 bg-slate-900/80 px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/60"
-                        placeholder="아이템 이름/효과/세트명으로 검색 (2글자 이상)"
                     />
-                    <p className="text-[11px] text-slate-500">
-                        2글자 이상 입력하면 필터링됩니다.
-                    </p>
                 </section>
 
                 <section className="flex flex-wrap gap-2">
@@ -140,13 +133,13 @@ export default function ItemPage() {
                     })}
                 </section>
 
-                <section className="grid gap-4 sm:grid-cols-3 md:grid-cols-4">
+                <section className="grid gap-3 sm:grid-cols-3 md:grid-cols-4">
                     {filteredData?.map((item) => (
                         <button
                             key={`${item.set_id}-${item.image}-${item.name}`}
                             type="button"
                             onClick={() => setSelectedItem(item)}
-                            className="rounded-2xl border border-slate-800 bg-slate-900/70 p-3 text-center text-xs text-slate-200 space-y-2 hover:border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-600"
+                            className="rounded-xl border border-slate-800 bg-slate-900/70 p-3 text-center text-xs text-slate-200 space-y-2 hover:border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-600"
                         >
                             <img
                                 src={`/images/item/item_${item.image}.png`}
@@ -164,7 +157,7 @@ export default function ItemPage() {
 
             {selectedItem && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8"
+                    className="fixed inset-0 z-50 flex items-center justify-center px-3 py-6"
                     role="dialog"
                     aria-modal="true"
                     aria-label={`${selectedItem.name} 상세 정보`}
@@ -175,8 +168,8 @@ export default function ItemPage() {
                         onClick={() => setSelectedItem(null)}
                         aria-label="닫기"
                     />
-                    <div className="relative w-full max-w-2xl rounded-2xl border border-slate-800 bg-slate-900 text-slate-200 shadow-xl">
-                        <div className="flex items-start gap-3 border-b border-slate-800 p-4">
+                    <div className="relative w-full max-w-2xl rounded-xl border border-slate-800 bg-slate-900 text-slate-200 shadow-xl">
+                        <div className="flex items-start gap-3 border-b border-slate-800 p-3">
                             <img
                                 src={`/images/item/item_${selectedItem.image}.png`}
                                 alt={selectedItem.name}
@@ -199,7 +192,7 @@ export default function ItemPage() {
                             </button>
                         </div>
 
-                        <div className="max-h-[70vh] space-y-4 overflow-auto p-4 text-sm">
+                        <div className="max-h-[70vh] space-y-3 overflow-auto p-3 text-sm">
                             <div>
                                 <p className="mb-1 text-xs font-semibold text-slate-300">
                                     효과

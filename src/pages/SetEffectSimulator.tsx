@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type Character = {
     job: string;
@@ -362,6 +363,9 @@ function parseAndCombineEffects(effects: string[]): string {
 }
 
 export default function SetEffectSimulator() {
+    const location = useLocation();
+    const navigate = useNavigate();
+
     const [characters, setCharacters] = useState<Character[]>([]);
     const [items, setItems] = useState<Item[]>([]);
     const [weapons, setWeapons] = useState<Weapon[]>([]);
@@ -419,6 +423,24 @@ export default function SetEffectSimulator() {
     }, []);
 
     useEffect(() => {
+        const state = location.state as unknown;
+        if (!state || typeof state !== "object") return;
+        if (!("pickerResult" in state)) return;
+        const pickerResult = (state as { pickerResult?: unknown }).pickerResult;
+        if (!pickerResult || typeof pickerResult !== "object") return;
+        const kind = (pickerResult as { kind?: unknown }).kind;
+        if (kind !== "job") return;
+        const applyTo = (pickerResult as { applyTo?: unknown }).applyTo;
+        if (applyTo !== "simulator") return;
+        const pickedJob = (pickerResult as { job?: unknown }).job;
+        if (typeof pickedJob !== "string" || pickedJob.length === 0) return;
+
+        setSelectedJob(pickedJob);
+        // clear router state to avoid re-applying on refresh/back
+        navigate(`${location.pathname}${location.search}${location.hash}`, { replace: true, state: null });
+    }, [location.state, location.pathname, location.search, location.hash, navigate]);
+
+    useEffect(() => {
         if (!initialSlotsFromStorage) return;
         if (!items.length && !weapons.length) return;
 
@@ -453,6 +475,11 @@ export default function SetEffectSimulator() {
         () => characters.find((c) => c.job === selectedJob) || null,
         [characters, selectedJob]
     );
+
+    const onPickJobClick = () => {
+        const returnTo = `${location.pathname}${location.search}${location.hash}`;
+        navigate("/pick/job", { state: { returnTo, applyTo: "simulator" } });
+    };
 
     const filteredWeapons = useMemo(() => {
         if (!selectedCharacter) return weapons;
@@ -565,7 +592,7 @@ export default function SetEffectSimulator() {
 
     if (!characters.length && !items.length && !weapons.length) {
         return (
-            <div className="flex flex-1 items-center justify-center px-4 py-10">
+            <div className="flex flex-1 items-center justify-center px-3 py-8">
                 <p>loading...</p>
             </div>
         );
@@ -617,7 +644,7 @@ export default function SetEffectSimulator() {
                     e.stopPropagation();
                     handleClearSlot(def.id);
                 }}
-                className={`flex flex-col items-center justify-center rounded border px-2 py-2 text-xs min-h-[70px] transition-colors ${
+                className={`flex flex-col items-center justify-center rounded-xl border px-2 py-1.5 text-xs min-h-[64px] transition-colors ${
                     isActive
                         ? "border-indigo-400 bg-slate-800"
                         : "border-slate-700 bg-slate-900 hover:border-indigo-400 hover:bg-slate-800"
@@ -679,29 +706,36 @@ export default function SetEffectSimulator() {
     };
 
     return (
-        <div className="flex flex-1 flex-col px-4 py-10">
-            <div className="mx-auto w-full max-w-6xl space-y-6">
-                <h1 className="text-3xl font-bold">세트 효과 시뮬레이터</h1>
+        <div className="flex flex-1 flex-col px-3 py-8">
+            <div className="mx-auto w-full max-w-5xl space-y-4">
+                <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">세트 효과 시뮬레이터</h1>
 
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-2">
                     {/* 좌측: 장비 슬롯 + 선택 패널 */}
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block mb-1 text-sm font-semibold">
-                                직업 선택
-                            </label>
-                            <select
-                                className="w-full rounded border border-slate-600 bg-slate-900 px-3 py-2 text-sm"
-                                value={selectedJob}
-                                onChange={(e) => setSelectedJob(e.target.value)}
+                    <div className="space-y-3">
+                        <div className="space-y-2">
+                            <div className="text-sm font-semibold">직업 선택</div>
+                            <button
+                                type="button"
+                                onClick={onPickJobClick}
+                                className="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-1.5 text-left text-sm text-slate-100 hover:border-indigo-400"
                             >
-                                <option value="">직업을 선택하세요</option>
-                                {characters.map((c) => (
-                                    <option key={c.job} value={c.job}>
-                                        {c.group} - {c.job}
-                                    </option>
-                                ))}
-                            </select>
+                                {selectedJob ? selectedJob : "직업을 선택하세요"}
+                            </button>
+                            {selectedCharacter?.image ? (
+                                <div className="flex items-center gap-2">
+                                    <img
+                                        src={`/images/character/${selectedCharacter.image}.PNG`}
+                                        alt={selectedCharacter.job}
+                                        className="h-10 w-10 rounded-full border border-slate-700 bg-slate-950/40 object-cover"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                    <div className="text-xs text-slate-400">
+                                        {selectedCharacter.group} / {selectedCharacter.job}
+                                    </div>
+                                </div>
+                            ) : null}
                         </div>
 
                         {/* 장비 슬롯 UI (3줄, 라벨 제거로 컴팩트하게) */}
@@ -731,7 +765,7 @@ export default function SetEffectSimulator() {
                         </div>
 
                         {/* 하단: 선택 가능한 아이템 목록 */}
-                        <div className="rounded-lg bg-slate-900/70 border border-slate-700 p-3 space-y-2 text-sm min-h-[180px]">
+                        <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-3 space-y-2 text-sm min-h-[160px]">
                             <div className="flex items-center justify-between">
                                 <h2 className="font-semibold">아이템 선택</h2>
                                 {activeSlot && (
@@ -746,7 +780,7 @@ export default function SetEffectSimulator() {
                             )}
 
                             {activeSlot && selectionItems.length > 0 ? (
-                                <div className="mt-2 max-h-64 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div className="mt-2 grid max-h-64 grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2">
                                     {selectionItems.map((value) => {
                                         const isWeapon = "basic_info" in value;
                                         const key = isWeapon
@@ -764,7 +798,7 @@ export default function SetEffectSimulator() {
                                                         value
                                                     )
                                                 }
-                                                className="text-left rounded border border-slate-700 bg-slate-900 px-2 py-2 text-xs hover:border-indigo-400 hover:bg-slate-800 transition-colors h-24 overflow-hidden"
+                                                className="h-24 overflow-hidden rounded-xl border border-slate-700 bg-slate-900 px-2 py-2 text-left text-xs transition-colors hover:border-indigo-400 hover:bg-slate-800"
                                             >
                                                 <div className="flex items-start gap-2">
                                                     <div className="w-10 h-10 rounded bg-slate-800 flex items-center justify-center overflow-hidden flex-shrink-0">
@@ -809,9 +843,9 @@ export default function SetEffectSimulator() {
                     </div>
 
                     {/* 우측: 효과 요약 및 개별 효과 */}
-                    <div className="space-y-4">
-                        <div className="rounded-lg bg-slate-900/70 p-4 border border-slate-700 min-h-[160px] whitespace-pre-wrap text-sm">
-                            <h2 className="text-lg font-semibold mb-2">효과 (요약)</h2>
+                    <div className="space-y-3">
+                        <div className="min-h-[150px] whitespace-pre-wrap rounded-xl border border-slate-700 bg-slate-900/70 p-3 text-sm">
+                            <h2 className="mb-2 text-base font-semibold">효과 (요약)</h2>
                             {combinedEffects ? (
                                 <p>{combinedEffects}</p>
                             ) : (
@@ -821,8 +855,8 @@ export default function SetEffectSimulator() {
                             )}
                         </div>
 
-                        <div className="rounded-lg bg-slate-900/70 p-4 border border-slate-700 text-sm space-y-3">
-                            <h2 className="text-lg font-semibold mb-2">개별 효과</h2>
+                        <div className="space-y-3 rounded-xl border border-slate-700 bg-slate-900/70 p-3 text-sm">
+                            <h2 className="mb-2 text-base font-semibold">개별 효과</h2>
 
                             {ALL_SLOT_ORDER.map((slotId) => {
                                 const value = selectedSlots[slotId];

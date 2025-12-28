@@ -1,4 +1,4 @@
-import { refineAttempt, getProb, type Outcome, type State } from "../engine";
+import { getProb, getRefineCost, refineAttempt, type Outcome, type State } from "../engine";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type LogEntry = {
@@ -31,7 +31,7 @@ function outcomeLabel(outcome: Outcome): string {
         case "FAIL":
             return "실패";
         case "BREAK":
-            return "파괴 (0)";
+            return "파괴";
     }
 }
 
@@ -81,14 +81,28 @@ function effectAnim(outcome: Outcome): string {
 
 export default function RefineSimulator() {
     const [state, setState] = useState<State>({ level: 0, failGuard: 0 });
+    const [resetLevel, setResetLevel] = useState<number>(0);
     const [logs, setLogs] = useState<LogEntry[]>([]);
+    const [logFilter, setLogFilter] = useState<"ALL" | "SUCCESS" | "KEEP" | "FAIL" | "BREAK">("ALL");
+    const [maxLevel, setMaxLevel] = useState(0);
     const [totalAttempts, setTotalAttempts] = useState(0);
+    const [totalStone, setTotalStone] = useState(0);
+    const [totalCatalyst, setTotalCatalyst] = useState(0);
+    const [totalRion, setTotalRion] = useState(0);
+    const [totalGold, setTotalGold] = useState(0);
+    const [totalTerra, setTotalTerra] = useState(0);
     const [effect, setEffect] = useState<ClickEffect | null>(null);
     const logContainerRef = useRef<HTMLDivElement | null>(null);
     const attemptCounterRef = useRef(0);
     const effectTimerRef = useRef<number | null>(null);
 
     const prob = useMemo(() => getProb(state.level, state.failGuard), [state.level, state.failGuard]);
+    const nf = useMemo(() => new Intl.NumberFormat("ko-KR", { maximumFractionDigits: 0 }), []);
+
+    const filteredLogs = useMemo(() => {
+        if (logFilter === "ALL") return logs;
+        return logs.filter((l) => l.outcome === logFilter);
+    }, [logs, logFilter]);
 
     useEffect(() => {
         return () => {
@@ -98,6 +112,7 @@ export default function RefineSimulator() {
 
     function handleAttempt() {
         const attempt = refineAttempt(state);
+        const cost = getRefineCost(attempt.prev.level);
         attemptCounterRef.current += 1;
         const nextAttemptNo = attemptCounterRef.current;
 
@@ -113,7 +128,13 @@ export default function RefineSimulator() {
         };
 
         setState(attempt.next);
+        setMaxLevel((prev) => Math.max(prev, attempt.prev.level, attempt.next.level));
         setTotalAttempts(nextAttemptNo);
+        setTotalStone((prev) => prev + cost.stone);
+        setTotalCatalyst((prev) => prev + cost.catalyst);
+        setTotalRion((prev) => prev + cost.rion);
+        setTotalGold((prev) => prev + cost.gold);
+        setTotalTerra((prev) => prev + cost.terra);
         setLogs((prev) => {
             const next = [entry, ...prev];
             return next.length > 200 ? next.slice(0, 200) : next;
@@ -131,9 +152,17 @@ export default function RefineSimulator() {
     }
 
     function handleReset() {
-        setState({ level: 0, failGuard: 0 });
+        const nextLevel = Number.isFinite(resetLevel) ? Math.min(9, Math.max(0, Math.trunc(resetLevel))) : 0;
+        setState({ level: nextLevel, failGuard: 0 });
         setLogs([]);
+        setLogFilter("ALL");
+        setMaxLevel(nextLevel);
         setTotalAttempts(0);
+        setTotalStone(0);
+        setTotalCatalyst(0);
+        setTotalRion(0);
+        setTotalGold(0);
+        setTotalTerra(0);
         attemptCounterRef.current = 0;
         setEffect(null);
         if (effectTimerRef.current !== null) window.clearTimeout(effectTimerRef.current);
@@ -143,8 +172,8 @@ export default function RefineSimulator() {
     const guardLabel = state.failGuard === 0 ? "보정 없음" : state.failGuard === 1 ? "1회 보정" : "2회 보정";
 
     return (
-        <div className="flex flex-1 flex-col px-4 py-8">
-            <div className="mx-auto w-full max-w-5xl space-y-6">
+        <div className="flex flex-1 flex-col px-3 py-6">
+            <div className="mx-auto w-full max-w-4xl space-y-4">
                 <div className="flex items-center justify-between gap-4">
                     <div className="space-y-1">
                         <h1 className="text-xl font-semibold tracking-tight text-slate-100 sm:text-2xl">연마 시뮬레이터</h1>
@@ -157,8 +186,8 @@ export default function RefineSimulator() {
                     />
                 </div>
 
-                <div className="grid gap-4 lg:grid-cols-2">
-                    <section className="relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-950/30 p-4">
+                <div className="grid gap-3 lg:grid-cols-2">
+                    <section className="relative overflow-hidden rounded-xl border border-slate-800 bg-slate-950/30 p-3">
                         <div className="flex items-start justify-between gap-4">
                             <div className="space-y-2">
                                 <p className="text-xs text-slate-400">현재 상태</p>
@@ -171,17 +200,32 @@ export default function RefineSimulator() {
                                 <button
                                     type="button"
                                     onClick={handleAttempt}
-                                    className="rounded-full border border-indigo-500/40 bg-indigo-500/10 px-4 py-2 text-sm text-indigo-200 hover:border-indigo-400 hover:bg-indigo-500/15"
+                                    className="rounded-full border border-indigo-500/40 bg-indigo-500/10 px-3 py-1.5 text-sm text-indigo-200 hover:border-indigo-400 hover:bg-indigo-500/15"
                                 >
                                     연마 시도
                                 </button>
+
                                 <button
                                     type="button"
                                     onClick={handleReset}
-                                    className="rounded-full border border-slate-800 bg-slate-950/40 px-4 py-2 text-sm text-slate-200 hover:border-slate-700"
+                                    className="rounded-full border border-slate-800 bg-slate-950/40 px-3 py-1.5 text-sm text-slate-200 hover:border-slate-700"
                                 >
                                     초기화
                                 </button>
+                                <label className="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-950/40 px-3 py-1.5 text-sm text-slate-200 hover:border-slate-700">
+                                    <select
+                                        aria-label="초기화 레벨"
+                                        value={resetLevel}
+                                        onChange={(e) => setResetLevel(parseInt(e.target.value, 10))}
+                                        className="bg-transparent text-sm text-slate-100 outline-none"
+                                    >
+                                        {Array.from({ length: 10 }, (_, i) => (
+                                            <option key={i} value={i}>
+                                                {i}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
                             </div>
                         </div>
 
@@ -189,7 +233,6 @@ export default function RefineSimulator() {
                             <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
                                 <div className="flex items-center justify-between">
                                     <div className="text-sm font-medium text-slate-200">현재 확률</div>
-                                    <div className="text-xs text-slate-500">(다음 시도 기준)</div>
                                 </div>
                                 <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
                                     <div className="flex items-center justify-between text-slate-200">
@@ -214,11 +257,38 @@ export default function RefineSimulator() {
                             <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
                                 <div className="flex items-center justify-between">
                                     <div className="text-sm font-medium text-slate-200">누적</div>
-                                    <div className="text-xs text-slate-500">최근 200개까지 저장</div>
+                                </div>
+                                <div className="mt-2 flex items-center justify-between text-sm">
+                                    <span className="text-slate-400">최고 연마</span>
+                                    <span className="tabular-nums text-slate-100">{maxLevel}</span>
                                 </div>
                                 <div className="mt-2 flex items-center justify-between text-sm">
                                     <span className="text-slate-400">시도 횟수</span>
                                     <span className="tabular-nums text-slate-100">{totalAttempts}</span>
+                                </div>
+                                <div className="mt-1 flex items-center justify-between text-sm">
+                                    <span className="text-slate-400">상급 라이언코크스</span>
+                                    <span className="tabular-nums text-slate-100">{nf.format(totalRion)}</span>
+                                </div>
+                                <div className="mt-1 flex items-center justify-between text-sm">
+                                    <span className="text-slate-400">연마석</span>
+                                    <span className="tabular-nums text-slate-100">{nf.format(totalStone)}</span>
+                                </div>
+                                <div className="mt-1 flex items-center justify-between text-sm">
+                                    <span className="text-slate-400">촉매제</span>
+                                    <span className="tabular-nums text-slate-100">{nf.format(totalCatalyst)}</span>
+                                </div>
+                                <div className="mt-1 flex items-center justify-between text-sm">
+                                    <span className="text-slate-400">골드</span>
+                                    <span className="tabular-nums text-slate-100">{nf.format(totalGold)}</span>
+                                </div>
+                                <div className="mt-1 flex items-center justify-between text-sm">
+                                    <span className="text-slate-400">테라</span>
+                                    <span className="tabular-nums text-slate-100">{nf.format(totalTerra)}</span>
+                                </div>
+                                <div className="mt-1 flex items-center justify-between text-sm">
+                                    <span className="text-slate-400">세라</span>
+                                    <span className="tabular-nums text-slate-100">{nf.format(totalTerra / 25)}</span>
                                 </div>
                             </div>
                         </div>
@@ -241,17 +311,67 @@ export default function RefineSimulator() {
                         )}
                     </section>
 
-                    <section className="rounded-2xl border border-slate-800 bg-slate-950/30 p-4">
+                    <section className="rounded-xl border border-slate-800 bg-slate-950/30 p-3">
                         <div className="flex items-center justify-between gap-4">
                             <h2 className="text-sm font-medium text-slate-200">로그</h2>
-                            <button
-                                type="button"
-                                onClick={() => setLogs([])}
-                                className="rounded-full border border-slate-800 bg-slate-950/40 px-3 py-1 text-xs text-slate-200 hover:border-slate-700"
-                                disabled={logs.length === 0}
-                            >
-                                로그 비우기
-                            </button>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setLogFilter((prev) => (prev === "SUCCESS" ? "ALL" : "SUCCESS"))}
+                                    aria-pressed={logFilter === "SUCCESS"}
+                                    className={`rounded-full border px-3 py-1 text-xs hover:border-slate-700 ${
+                                        logFilter === "SUCCESS"
+                                            ? `${outcomeChipTone("SUCCESS")} ${outcomeTone("SUCCESS")}`
+                                            : "border-slate-800 bg-slate-950/40 text-slate-200"
+                                    }`}
+                                >
+                                    성공
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setLogFilter((prev) => (prev === "KEEP" ? "ALL" : "KEEP"))}
+                                    aria-pressed={logFilter === "KEEP"}
+                                    className={`rounded-full border px-3 py-1 text-xs hover:border-slate-700 ${
+                                        logFilter === "KEEP"
+                                            ? `${outcomeChipTone("KEEP")} ${outcomeTone("KEEP")}`
+                                            : "border-slate-800 bg-slate-950/40 text-slate-200"
+                                    }`}
+                                >
+                                    유지
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setLogFilter((prev) => (prev === "FAIL" ? "ALL" : "FAIL"))}
+                                    aria-pressed={logFilter === "FAIL"}
+                                    className={`rounded-full border px-3 py-1 text-xs hover:border-slate-700 ${
+                                        logFilter === "FAIL"
+                                            ? `${outcomeChipTone("FAIL")} ${outcomeTone("FAIL")}`
+                                            : "border-slate-800 bg-slate-950/40 text-slate-200"
+                                    }`}
+                                >
+                                    실패
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setLogFilter((prev) => (prev === "BREAK" ? "ALL" : "BREAK"))}
+                                    aria-pressed={logFilter === "BREAK"}
+                                    className={`rounded-full border px-3 py-1 text-xs hover:border-slate-700 ${
+                                        logFilter === "BREAK"
+                                            ? `${outcomeChipTone("BREAK")} ${outcomeTone("BREAK")}`
+                                            : "border-slate-800 bg-slate-950/40 text-slate-200"
+                                    }`}
+                                >
+                                    파괴
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setLogs([])}
+                                    className="rounded-full border border-slate-800 bg-slate-950/40 px-3 py-1 text-xs text-slate-200 hover:border-slate-700"
+                                    disabled={logs.length === 0}
+                                >
+                                    로그 비우기
+                                </button>
+                            </div>
                         </div>
 
                         <div
@@ -260,9 +380,11 @@ export default function RefineSimulator() {
                         >
                             {logs.length === 0 ? (
                                 <p className="text-sm text-slate-500">아직 로그가 없어요. “연마 시도”를 눌러보세요.</p>
+                            ) : filteredLogs.length === 0 ? (
+                                <p className="text-sm text-slate-500">선택한 필터에 해당하는 로그가 없어요.</p>
                             ) : (
                                 <div className="space-y-2">
-                                    {logs.map((l) => {
+                                    {filteredLogs.map((l) => {
                                             const time = new Date(l.at).toLocaleTimeString();
                                             return (
                                                 <div key={l.id} className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2">
