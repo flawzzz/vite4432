@@ -363,14 +363,6 @@ export default function RefineSimulator() {
                                 >
                                     파괴
                                 </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setLogs([])}
-                                    className="rounded-full border border-slate-800 bg-slate-950/40 px-3 py-1 text-xs text-slate-200 hover:border-slate-700"
-                                    disabled={logs.length === 0}
-                                >
-                                    로그 비우기
-                                </button>
                             </div>
                         </div>
 
